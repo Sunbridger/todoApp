@@ -2,8 +2,8 @@ import axios from 'axios';
 
 // GitHub API配置
 const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
-const REPO_OWNER = import.meta.env.VITE_REPO_OWNER;
-const REPO_NAME = import.meta.env.VITE_REPO_NAME;
+const REPO_OWNER = 'Sunbridger';
+const REPO_NAME = 'todoApp';
 
 const API_BASE_URL = 'https://api.github.com';
 
@@ -24,7 +24,7 @@ export const getTodos = async () => {
         labels: 'todo'
       }
     });
-    
+
     return response.data
       .map(issue => ({
         id: issue.id,
@@ -48,7 +48,7 @@ export const createTodo = async (text) => {
       title: text,
       labels: ['todo']
     });
-    
+
     return {
       id: response.data.id,
       githubNumber: response.data.number,
@@ -69,26 +69,26 @@ export const updateTodo = async (id, updates) => {
     // 首先需要获取issue number
     const todos = await getTodos();
     const todo = todos.find(t => t.id === id);
-    
+
     if (!todo) {
       throw new Error('待办事项不存在');
     }
-    
+
     let updateData = {};
     if (updates.text !== undefined) {
       updateData.title = updates.text;
     }
-    
+
     // 如果要更新完成状态
     if (updates.completed !== undefined) {
       updateData.state = updates.completed ? 'closed' : 'open';
     }
-    
+
     const response = await axiosInstance.patch(
       `/repos/${REPO_OWNER}/${REPO_NAME}/issues/${todo.githubNumber}`,
       updateData
     );
-    
+
     return {
       id: response.data.id,
       githubNumber: response.data.number,
@@ -108,11 +108,11 @@ export const deleteTodo = async (id) => {
   try {
     const todos = await getTodos();
     const todo = todos.find(t => t.id === id);
-    
+
     if (!todo) {
       throw new Error('待办事项不存在');
     }
-    
+
     // GitHub Issues不支持直接删除，我们将其关闭并添加删除标签
     await axiosInstance.patch(
       `/repos/${REPO_OWNER}/${REPO_NAME}/issues/${todo.githubNumber}`,
@@ -121,7 +121,7 @@ export const deleteTodo = async (id) => {
         labels: ['todo', 'deleted']
       }
     );
-    
+
     return { success: true };
   } catch (error) {
     // eslint-disable-next-line no-throw-before-return
