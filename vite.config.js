@@ -4,22 +4,8 @@ import react from '@vitejs/plugin-react';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  server: {
-    port: 3000,
-  },
+  base: './',  // 添加这一行以支持 GitHub Pages
   build: {
-    outDir: 'dist',
-  },
-  esbuild: {
-    loader: "jsx",
-    include: /src\/.*\.[jt]sx?$/,
-    exclude: [],
-  },
-  optimizeDeps: {
-    esbuildOptions: {
-      loader: {
-        '.js': 'jsx',
-      },
-    },
-  },
+    outDir: 'dist'
+  }
 });
