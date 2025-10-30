@@ -36,3 +36,5 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./dist
         cname: false
+        force_orphan: true
+        create_branch: true
