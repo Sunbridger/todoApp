@@ -1,3 +1,18 @@
+.architect
+bootstrap.css
+bootstrap.js
+bootstrap.json
+bootstrap.jsonp
+build/
+classic.json
+classic.jsonp
+ext/
+modern.json
+modern.jsonp
+resources/sass/.sass-cache/
+resources/.arch-internal-preview.css
+.arch-internal-preview.css
+>>>>>>> c681d460772907a57068d8adf6e015e0f3a57347
 node_modules
 build
 
@@ -22,3 +37,19 @@ pids
 # OS generated files
 .DS_Store
 Thumbs.db
+=======
+.architect
+bootstrap.css
+bootstrap.js
+bootstrap.json
+bootstrap.jsonp
+build/
+classic.json
+classic.jsonp
+ext/
+modern.json
+modern.jsonp
+resources/sass/.sass-cache/
+resources/.arch-internal-preview.css
+.arch-internal-preview.css
+>>>>>>> c681d460772907a57068d8adf6e015e0f3a57347
