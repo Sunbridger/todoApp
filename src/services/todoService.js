@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // GitHub API配置
-const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
+const VITE_GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
 const REPO_OWNER = 'Sunbridger';
 const REPO_NAME = 'todoApp';
 
@@ -10,7 +10,7 @@ const API_BASE_URL = 'https://api.github.com';
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    'Authorization': `token ${GITHUB_TOKEN}`,
+    'Authorization': `token ${VITE_GITHUB_TOKEN}`,
     'Accept': 'application/vnd.github.v3+json'
   }
 });
