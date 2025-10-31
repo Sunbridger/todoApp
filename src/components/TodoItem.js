@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Checkbox, Button, Typography, Input, message } from 'antd';
+import { Checkbox, Button, Typography, Input, message, Popconfirm } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -187,17 +187,25 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
               >
                 编辑
               </Button>
-              <Button
-                icon={<DeleteOutlined />}
-                onClick={() => onDelete(todo.id)}
-                size="middle"
-                danger
-                style={{
-                  borderRadius: 6,
-                }}
+              <Popconfirm
+                title="确认删除"
+                description="确定要删除这个任务吗？"
+                onConfirm={() => onDelete(todo.id)}
+                okText="确定"
+                cancelText="取消"
+                placement="topRight"
               >
-                删除
-              </Button>
+                <Button
+                  icon={<DeleteOutlined />}
+                  size="middle"
+                  danger
+                  style={{
+                    borderRadius: 6,
+                  }}
+                >
+                  删除
+                </Button>
+              </Popconfirm>
             </div>
           </div>
           {content && (

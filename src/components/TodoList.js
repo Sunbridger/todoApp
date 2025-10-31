@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { List, Typography, message, Empty, Input } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import TodoItem from './TodoItem';
 import TodoInput from './TodoInput';
 import {
@@ -10,9 +11,8 @@ import {
 } from '../services/todoService';
 
 const { Title } = Typography;
-const { Search } = Input;
 
-const TodoList = ({ filter }) => {
+const TodoList = React.memo(({ filter }) => {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -119,29 +119,61 @@ const TodoList = ({ filter }) => {
 
   return (
     <div>
-      <Title
-        level={4}
-        style={{
-          textAlign: 'center',
-          marginBottom: 28,
-          color: '#333',
-          fontWeight: 800,
-          fontSize: 28,
-        }}
-      >
-        {getTitle()}
-      </Title>
-      <TodoInput onAdd={handleAddTodo} />
-      <div style={{ margin: '20px 0' }}>
-        <Search
-          placeholder="搜索待办事项..."
-          allowClear
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onSearch={(value) => setSearchTerm(value)}
-          style={{ width: '100%' }}
-          size="large"
-        />
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 20,
+        flexWrap: 'wrap',
+        gap: 12
+      }}>
+        <Title
+          level={4}
+          style={{
+            margin: 0,
+            color: '#333',
+            fontWeight: 800,
+            fontSize: 24,
+          }}
+        >
+          {getTitle()}
+        </Title>
+        <div style={{ flex: 1, maxWidth: 300, position: 'relative' }}>
+          <input
+            type="text"
+            placeholder="搜索任务..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '8px 12px 8px 36px',
+              borderRadius: '18px',
+              border: '1px solid #d9d9d9',
+              fontSize: '14px',
+              transition: 'all 0.3s',
+              outline: 'none',
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#40a9ff';
+              e.target.style.boxShadow = '0 0 0 2px rgba(24, 144, 255, 0.2)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = '#d9d9d9';
+              e.target.style.boxShadow = 'none';
+            }}
+          />
+          <SearchOutlined
+            style={{
+              position: 'absolute',
+              left: 12,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: '#bfbfbf'
+            }}
+          />
+        </div>
       </div>
+      <TodoInput onAdd={handleAddTodo} />
       <List
         loading={loading}
         dataSource={filteredTodos}
@@ -162,6 +194,6 @@ const TodoList = ({ filter }) => {
       />
     </div>
   );
-};
+});
 
 export default TodoList;

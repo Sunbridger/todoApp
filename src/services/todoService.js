@@ -160,18 +160,68 @@ export const deleteTodo = async (id) => {
       throw new Error('待办事项不存在');
     }
 
-    // GitHub Issues不支持直接删除，我们将其关闭并添加删除标签
-    await axiosInstance.patch(
-      `/repos/${REPO_OWNER}/${REPO_NAME}/issues/${todo.githubNumber}`,
-      {
-        state: 'closed',
-        labels: ['todo', 'deleted']
+    // 使用GitHub GraphQL API真正删除Issue
+    const graphqlEndpoint = 'https://api.github.com/graphql';
+    
+    // 首先需要获取Issue的GraphQL ID
+    const graphqlQuery = `
+      query GetIssueId($owner: String!, $name: String!, $number: Int!) {
+        repository(owner: $owner, name: $name) {
+          issue(number: $number) {
+            id
+          }
+        }
       }
-    );
-
+    `;
+    
+    const response = await axios.post(graphqlEndpoint, {
+      query: graphqlQuery,
+      variables: {
+        owner: REPO_OWNER,
+        name: REPO_NAME,
+        number: todo.githubNumber
+      }
+    }, {
+      headers: {
+        'Authorization': `Bearer ${VITE_GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    
+    if (response.data.errors) {
+      throw new Error(response.data.errors[0].message);
+    }
+    
+    const issueId = response.data.data.repository.issue.id;
+    
+    // 然后使用deleteIssue突变删除Issue
+    const deleteMutation = `
+      mutation DeleteIssue($issueId: ID!) {
+        deleteIssue(input: {issueId: $issueId}) {
+          clientMutationId
+        }
+      }
+    `;
+    
+    const deleteResponse = await axios.post(graphqlEndpoint, {
+      query: deleteMutation,
+      variables: {
+        issueId: issueId
+      }
+    }, {
+      headers: {
+        'Authorization': `Bearer ${VITE_GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    
+    if (deleteResponse.data.errors) {
+      throw new Error(deleteResponse.data.errors[0].message);
+    }
+    
     return { success: true };
   } catch (error) {
     // eslint-disable-next-line no-throw-before-return
-    throw new Error(error.response?.data?.message || '删除待办事项失败');
+    throw new Error(error.response?.data?.message || error.message || '删除待办事项失败');
   }
 };
