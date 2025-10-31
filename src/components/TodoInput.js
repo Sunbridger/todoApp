@@ -11,12 +11,11 @@ const TodoInput = ({ onAdd }) => {
 
   const handleSubmit = (values) => {
     if (values.title?.trim()) {
-      // 将标题和描述组合成一个文本，第一行是标题，后面是描述
-      const fullText = values.description 
-        ? `${values.title}\n${values.description}`
-        : values.title;
-      
-      onAdd(fullText);
+      // 不再合并 title 和 description，直接传递两个字段
+      onAdd({
+        title: values.title,
+        description: values.description || '',
+      });
       form.resetFields();
       setDescription('');
       setIsExpanded(false);
@@ -43,8 +42,8 @@ const TodoInput = ({ onAdd }) => {
   ];
 
   return (
-    <Card 
-      style={{ 
+    <Card
+      style={{
         marginBottom: 24,
         borderRadius: 8,
         boxShadow: '0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.02)'
@@ -56,8 +55,8 @@ const TodoInput = ({ onAdd }) => {
           name="title"
           rules={[{ required: true, message: '请输入任务标题' }]}
         >
-          <Input 
-            placeholder="任务标题" 
+          <Input
+            placeholder="任务标题"
             size="large"
             style={{ borderRadius: 6 }}
           />
@@ -74,7 +73,7 @@ const TodoInput = ({ onAdd }) => {
               onChange={setDescription}
               modules={modules}
               formats={formats}
-              style={{ 
+              style={{
                 backgroundColor: '#fff',
                 borderRadius: 6
               }}
@@ -84,17 +83,17 @@ const TodoInput = ({ onAdd }) => {
         )}
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Button 
-            type="link" 
+          <Button
+            type="link"
             onClick={() => setIsExpanded(!isExpanded)}
             style={{ padding: 0 }}
           >
             {isExpanded ? '︽ 收起详细编辑' : '︾ 展开详细编辑'}
           </Button>
-          
+
           <Form.Item noStyle>
-            <Button 
-              type="primary" 
+            <Button
+              type="primary"
               htmlType="submit"
               icon={<PlusOutlined />}
               size="large"

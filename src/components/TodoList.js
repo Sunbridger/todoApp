@@ -26,10 +26,27 @@ const TodoList = ({ filter }) => {
     }
   };
 
-  const handleAddTodo = async (text) => {
+  const handleAddTodo = async (data) => {
     try {
-      const newTodo = await createTodo(text);
-      setTodos(prev => [newTodo, ...prev]); // 新增的待办事项放在最前面
+      await createTodo({
+        title: data.title,
+        body: data.description,
+        completed: false,
+      });
+      
+      // 添加延迟以确保GitHub API同步完成
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // 重试机制，最多尝试3次获取最新数据
+      let retries = 0;
+      const maxRetries = 3;
+      while (retries < maxRetries) {
+        await fetchTodos();
+        // 等待一小段时间再检查
+        await new Promise(resolve => setTimeout(resolve, 300));
+        retries++;
+      }
+      
       message.success('添加成功');
     } catch (error) {
       message.error('添加失败: ' + error.message);
@@ -75,8 +92,8 @@ const TodoList = ({ filter }) => {
 
   return (
     <div>
-      <Title level={4} style={{ 
-        textAlign: 'center', 
+      <Title level={4} style={{
+        textAlign: 'center',
         marginBottom: 28,
         color: '#333',
         fontWeight: 800,
@@ -98,7 +115,7 @@ const TodoList = ({ filter }) => {
             />
           </List.Item>
         )}
-        style={{ 
+        style={{
           background: 'transparent',
           paddingTop: 20
         }}

@@ -47,6 +47,7 @@ export const getTodos = async () => {
         id: issue.id,
         githubNumber: issue.number,
         text: issue.title,
+        body: issue.body || '',
         completed: issue.state === 'closed',
         createdAt: issue.created_at,
         updatedAt: issue.updated_at
@@ -59,25 +60,20 @@ export const getTodos = async () => {
 };
 
 // 创建待办事项
-export const createTodo = async (text) => {
+export const createTodo = async ({ title, body }) => {
   try {
-    // 限制标题长度，避免GitHub API限制
-    const lines = text.split('\n');
-    let title = lines[0];
-    const body = lines.slice(1).join('\n');
-    
     // 如果标题太长，截取并添加省略号
     if (title.length > 250) {
       title = title.substring(0, 247) + '...';
     }
-    
+
     const requestData = {
       title: title,
       labels: ['todo']
     };
-    
+
     // 如果有详细内容，添加到body中
-    if (body.trim()) {
+    if (body && body.trim()) {
       requestData.body = body;
     }
 
@@ -86,7 +82,8 @@ export const createTodo = async (text) => {
     return {
       id: response.data.id,
       githubNumber: response.data.number,
-      text: response.data.title + (response.data.body ? '\n' + response.data.body : ''),
+      text: response.data.title,
+      body: response.data.body || '',
       completed: false,
       createdAt: response.data.created_at,
       updatedAt: response.data.updated_at
@@ -114,14 +111,14 @@ export const updateTodo = async (id, updates) => {
       const lines = updates.text.split('\n');
       let title = lines[0];
       const body = lines.slice(1).join('\n');
-      
+
       // 如果标题太长，截取并添加省略号
       if (title.length > 250) {
         title = title.substring(0, 247) + '...';
       }
-      
+
       updateData.title = title;
-      
+
       // 如果有详细内容，添加到body中
       if (body.trim()) {
         updateData.body = body;
@@ -141,7 +138,8 @@ export const updateTodo = async (id, updates) => {
     return {
       id: response.data.id,
       githubNumber: response.data.number,
-      text: response.data.title + (response.data.body ? '\n' + response.data.body : ''),
+      text: response.data.title,
+      body: response.data.body || '',
       completed: response.data.state === 'closed',
       createdAt: response.data.created_at,
       updatedAt: response.data.updated_at

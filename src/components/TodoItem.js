@@ -16,15 +16,9 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
 
-  // 解析todo文本，第一行为标题，其余为内容
-  const parseTodoText = (text) => {
-    const lines = text.split('\n');
-    const title = lines[0] || '';
-    const content = lines.slice(1).join('\n') || '';
-    return { title, content };
-  };
-
-  const { title, content } = parseTodoText(todo.text);
+  // 标题使用text字段，内容使用body字段
+  const title = todo.text || '';
+  const content = todo.body || '';
 
   const handleToggleComplete = (e) => {
     onUpdate(todo.id, { completed: e.target.checked });
@@ -42,14 +36,13 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
     setEditDescription('');
   };
 
+  // 修改：不再尝试解析 fullText，直接使用 text 和 body
   const handleSaveEdit = () => {
     if (editTitle.trim()) {
-      // 将标题和描述组合成一个文本
-      const fullText = editDescription 
-        ? `${editTitle}\n${editDescription}`
-        : editTitle;
-      
-      onUpdate(todo.id, { text: fullText });
+      onUpdate(todo.id, { 
+        text: editTitle, 
+        body: editDescription 
+      });
       setEditing(false);
     } else {
       message.warning('请输入任务标题');
@@ -108,9 +101,9 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
             size="large"
           />
           <div>
-            <div style={{ 
-              fontSize: 14, 
-              color: '#595959', 
+            <div style={{
+              fontSize: 14,
+              color: '#595959',
               marginBottom: 8,
               fontWeight: 500
             }}>
@@ -122,7 +115,7 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
               onChange={setEditDescription}
               modules={modules}
               formats={formats}
-              style={{ 
+              style={{
                 backgroundColor: '#fff',
                 borderRadius: 6
               }}
@@ -134,7 +127,7 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
               icon={<CloseOutlined />}
               onClick={handleCancelEdit}
               size="large"
-              style={{ 
+              style={{
                 borderRadius: 6,
                 fontWeight: 500,
                 padding: '0 24px'
@@ -147,7 +140,7 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
               icon={<CheckOutlined />}
               onClick={handleSaveEdit}
               size="large"
-              style={{ 
+              style={{
                 borderRadius: 6,
                 fontWeight: 500,
                 padding: '0 24px'
@@ -199,7 +192,7 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
                 onClick={() => onDelete(todo.id)}
                 size="middle"
                 danger
-                style={{ 
+                style={{
                   borderRadius: 6,
                 }}
               >
@@ -217,9 +210,9 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
                 border: '1px solid #f0f0f0'
               }}
             >
-              <div 
-                dangerouslySetInnerHTML={{ __html: content }} 
-                style={{ 
+              <div
+                dangerouslySetInnerHTML={{ __html: content }}
+                style={{
                   color: todo.completed ? '#8c8c8c' : '#595959',
                   fontSize: 14,
                   lineHeight: 1.6
