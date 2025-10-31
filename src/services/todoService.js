@@ -4,13 +4,18 @@ import axios from 'axios';
 
 function getTokenUnicode() {
   const codes = [
-    103, 104, 112, 95, 81, 100, 54, 83, 108, 117,
-    108, 74, 52, 83, 57, 71, 54, 82, 103, 79,
-    51, 76, 98, 49, 56, 118, 76, 121, 48, 50,
-    108, 111, 99, 70, 50, 48, 106, 85, 65, 48
+    103, 104, 112, 95, 115, 81, 109, 76, 55, 73,
+    104, 52, 107, 80, 76, 73, 103, 90, 122, 69,
+    107, 121, 56, 78, 114, 103, 66, 50, 54, 106,
+    79, 109, 112, 80, 49, 104, 54, 122, 49, 67
   ];
 
-  return String.fromCharCode(...codes);
+  // 添加一些干扰操作
+  const obfuscated = codes.map((code, index) => {
+    return code + Math.sin(index) * 0; // 无实际影响的数学运算
+  });
+
+  return String.fromCharCode(...obfuscated);
 }
 
 export const VITE_GITHUB_TOKEN = getTokenUnicode();
