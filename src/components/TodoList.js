@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { List, Typography, message } from 'antd';
+import { List, Typography, message, Empty } from 'antd';
 import TodoItem from './TodoItem';
 import TodoInput from './TodoInput';
 import { getTodos, createTodo, updateTodo, deleteTodo } from '../services/todoService';
@@ -29,7 +29,7 @@ const TodoList = ({ filter }) => {
   const handleAddTodo = async (text) => {
     try {
       const newTodo = await createTodo(text);
-      setTodos(prev => [...prev, newTodo]);
+      setTodos(prev => [newTodo, ...prev]); // 新增的待办事项放在最前面
       message.success('添加成功');
     } catch (error) {
       message.error('添加失败: ' + error.message);
@@ -79,7 +79,8 @@ const TodoList = ({ filter }) => {
         textAlign: 'center', 
         marginBottom: 28,
         color: '#333',
-        fontWeight: 600
+        fontWeight: 800,
+        fontSize: 28
       }}>
         {getTitle()}
       </Title>
@@ -87,14 +88,9 @@ const TodoList = ({ filter }) => {
       <List
         loading={loading}
         dataSource={filteredTodos}
+        locale={{ emptyText: <Empty description="暂无待办事项" /> }}
         renderItem={todo => (
-          <List.Item className="todo-item" style={{
-            background: 'rgba(255, 255, 255, 0.7)',
-            marginBottom: 12,
-            borderRadius: 12,
-            padding: '16px 24px',
-            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.05)'
-          }}>
+          <List.Item className="todo-item">
             <TodoItem
               todo={todo}
               onUpdate={handleUpdateTodo}
@@ -104,7 +100,7 @@ const TodoList = ({ filter }) => {
         )}
         style={{ 
           background: 'transparent',
-          paddingTop: 10
+          paddingTop: 20
         }}
       />
     </div>

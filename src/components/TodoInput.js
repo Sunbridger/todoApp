@@ -1,52 +1,114 @@
 import React, { useState } from 'react';
-import { Input, Button, Form } from 'antd';
+import { Input, Button, message, Form, Card } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const TodoInput = ({ onAdd }) => {
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [description, setDescription] = useState('');
 
-  const handleSubmit = async (values) => {
-    if (!values.text.trim()) return;
-    
-    setLoading(true);
-    try {
-      await onAdd(values.text);
+  const handleSubmit = (values) => {
+    if (values.title?.trim()) {
+      // 将标题和描述组合成一个文本，第一行是标题，后面是描述
+      const fullText = values.description 
+        ? `${values.title}\n${values.description}`
+        : values.title;
+      
+      onAdd(fullText);
       form.resetFields();
-    } finally {
-      setLoading(false);
+      setDescription('');
+      setIsExpanded(false);
+    } else {
+      message.warning('请输入任务标题');
     }
   };
 
+  const modules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      ['link'],
+      ['clean']
+    ],
+  };
+
+  const formats = [
+    'header',
+    'bold', 'italic', 'underline', 'strike',
+    'list', 'bullet',
+    'link'
+  ];
+
   return (
-    <Form form={form} onFinish={handleSubmit} style={{ marginBottom: 24 }}>
-      <Form.Item
-        name="text"
-        rules={[{ required: true, message: '请输入待办事项内容' }]}
-      >
-        <Input
-          placeholder="📝 添加新的待办事项"
-          suffix={
+    <Card 
+      style={{ 
+        marginBottom: 24,
+        borderRadius: 8,
+        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.02)'
+      }}
+      bodyStyle={{ padding: 20 }}
+    >
+      <Form form={form} layout="vertical" onFinish={handleSubmit}>
+        <Form.Item
+          name="title"
+          rules={[{ required: true, message: '请输入任务标题' }]}
+        >
+          <Input 
+            placeholder="任务标题" 
+            size="large"
+            style={{ borderRadius: 6 }}
+          />
+        </Form.Item>
+
+        {isExpanded && (
+          <Form.Item
+            name="description"
+            label="任务描述"
+          >
+            <ReactQuill
+              theme="snow"
+              value={description}
+              onChange={setDescription}
+              modules={modules}
+              formats={formats}
+              style={{ 
+                backgroundColor: '#fff',
+                borderRadius: 6
+              }}
+              placeholder="添加任务的详细描述..."
+            />
+          </Form.Item>
+        )}
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Button 
+            type="link" 
+            onClick={() => setIsExpanded(!isExpanded)}
+            style={{ padding: 0 }}
+          >
+            {isExpanded ? '︽ 收起详细编辑' : '︾ 展开详细编辑'}
+          </Button>
+          
+          <Form.Item noStyle>
             <Button 
               type="primary" 
-              icon={<PlusOutlined />} 
-              onClick={form.submit}
-              loading={loading}
-              style={{ 
-                marginRight: -8,
-                borderRadius: '0 6px 6px 0'
+              htmlType="submit"
+              icon={<PlusOutlined />}
+              size="large"
+              style={{
+                borderRadius: 6,
+                fontWeight: 500
               }}
             >
-              添加
+              添加任务
             </Button>
-          }
-          style={{
-            borderRadius: 6,
-            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)'
-          }}
-        />
-      </Form.Item>
-    </Form>
+          </Form.Item>
+        </div>
+      </Form>
+    </Card>
   );
 };
 

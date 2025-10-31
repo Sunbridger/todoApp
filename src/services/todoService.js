@@ -61,15 +61,32 @@ export const getTodos = async () => {
 // 创建待办事项
 export const createTodo = async (text) => {
   try {
-    const response = await axiosInstance.post(`/repos/${REPO_OWNER}/${REPO_NAME}/issues`, {
-      title: text,
+    // 限制标题长度，避免GitHub API限制
+    const lines = text.split('\n');
+    let title = lines[0];
+    const body = lines.slice(1).join('\n');
+    
+    // 如果标题太长，截取并添加省略号
+    if (title.length > 250) {
+      title = title.substring(0, 247) + '...';
+    }
+    
+    const requestData = {
+      title: title,
       labels: ['todo']
-    });
+    };
+    
+    // 如果有详细内容，添加到body中
+    if (body.trim()) {
+      requestData.body = body;
+    }
+
+    const response = await axiosInstance.post(`/repos/${REPO_OWNER}/${REPO_NAME}/issues`, requestData);
 
     return {
       id: response.data.id,
       githubNumber: response.data.number,
-      text: response.data.title,
+      text: response.data.title + (response.data.body ? '\n' + response.data.body : ''),
       completed: false,
       createdAt: response.data.created_at,
       updatedAt: response.data.updated_at
@@ -93,7 +110,22 @@ export const updateTodo = async (id, updates) => {
 
     let updateData = {};
     if (updates.text !== undefined) {
-      updateData.title = updates.text;
+      // 解析文本，第一行为标题，其余为内容
+      const lines = updates.text.split('\n');
+      let title = lines[0];
+      const body = lines.slice(1).join('\n');
+      
+      // 如果标题太长，截取并添加省略号
+      if (title.length > 250) {
+        title = title.substring(0, 247) + '...';
+      }
+      
+      updateData.title = title;
+      
+      // 如果有详细内容，添加到body中
+      if (body.trim()) {
+        updateData.body = body;
+      }
     }
 
     // 如果要更新完成状态
@@ -109,7 +141,7 @@ export const updateTodo = async (id, updates) => {
     return {
       id: response.data.id,
       githubNumber: response.data.number,
-      text: response.data.title,
+      text: response.data.title + (response.data.body ? '\n' + response.data.body : ''),
       completed: response.data.state === 'closed',
       createdAt: response.data.created_at,
       updatedAt: response.data.updated_at
