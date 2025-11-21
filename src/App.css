@@ -101,6 +101,11 @@ body {
   width: 260px;
   flex-shrink: 0;
   background: transparent !important;
+  position: sticky;
+  top: 80px; /* Header height (64px) + spacing */
+  height: fit-content;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
 }
 
 .menu-card {
@@ -222,6 +227,7 @@ body {
   transition: all 0.2s;
   display: flex;
   flex-direction: column;
+  width: 100%; /* Ensure full width */
 }
 
 .todo-item-card:hover {

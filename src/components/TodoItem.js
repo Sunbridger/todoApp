@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Checkbox, Button, Input, message, Popconfirm } from 'antd';
   // ... existing imports
 import {
@@ -6,6 +6,8 @@ import {
   EditOutlined,
   CheckOutlined,
   CloseOutlined,
+  DownOutlined,
+  UpOutlined,
 } from '@ant-design/icons';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -16,8 +18,20 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
 
+  // Expand/Collapse state
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showExpandBtn, setShowExpandBtn] = useState(false);
+  const contentRef = useRef(null);
+
   const title = todo?.text || '';
   const content = todo?.body || '';
+
+  useEffect(() => {
+    if (contentRef.current) {
+      // Check if content height exceeds 60px (approx 3 lines)
+      setShowExpandBtn(contentRef.current.scrollHeight > 60);
+    }
+  }, [content, todo?.id]);
 
   const handleToggleComplete = (e) => {
     onUpdate(todo.id, { completed: e.target.checked });
@@ -98,10 +112,25 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
             {title}
           </div>
           {content && (
-            <div
-              className="todo-body"
-              dangerouslySetInnerHTML={{ __html: content }}
-            />
+            <div className="todo-body-wrapper">
+              <div
+                ref={contentRef}
+                className={`todo-body ${isExpanded ? 'expanded' : 'collapsed'}`}
+                dangerouslySetInnerHTML={{ __html: content }}
+              />
+              {showExpandBtn && (
+                <Button
+                  type="link"
+                  size="small"
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className="expand-btn"
+                  icon={isExpanded ? <UpOutlined /> : <DownOutlined />}
+                  style={{ padding: '4px 0', height: 'auto' }}
+                >
+                  {isExpanded ? '收起' : '展开'}
+                </Button>
+              )}
+            </div>
           )}
         </div>
         <div className="todo-actions">
