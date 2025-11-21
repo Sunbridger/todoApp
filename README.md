@@ -1,140 +1,446 @@
 # 现代化待办清单应用
 
-一个基于 React、Ant Design 和 GitHub API 构建的现代化待办事项管理应用。该应用利用 GitHub Issues 作为数据存储后端，提供了完整的任务管理功能和数据分析能力。
+> 基于 React + GitHub Issues API 的现代化任务管理应用，支持标签系统、黑暗模式和富文本编辑。
 
-## 功能特性
+![Light Mode](/Users/zcy/.gemini/antigravity/brain/f7697bfc-1038-4c58-a065-ceb00c4cfb3e/light_mode_complete_1763715481542.png)
 
-- ✅ **任务管理**：添加、编辑、删除待办事项
-- ✅ **状态跟踪**：标记待办事项为已完成/进行中
-- ✅ **任务筛选**：按状态筛选任务（所有、进行中、已完成）
-- ✅ **任务搜索**：快速搜索任务标题和内容
-- ✅ **富文本编辑**：支持富文本格式的任务描述
-- ✅ **响应式设计**：完美适配桌面端和移动端
-- ✅ **数据持久化**：使用 GitHub Issues 作为数据存储
-- ✅ **数据分析**：可视化展示任务统计数据
-- ✅ **访客统计**：实时监控应用使用情况
+## 📋 目录
 
-## 技术栈
+- [功能特性](#功能特性)
+- [技术栈](#技术栈)
+- [架构设计](#架构设计)
+- [快速开始](#快速开始)
+- [项目结构](#项目结构)
+- [核心功能](#核心功能)
+- [主题系统](#主题系统)
+- [API 集成](#api-集成)
+- [开发指南](#开发指南)
 
-- **前端框架**：React 18
-- **UI 组件库**：Ant Design
-- **构建工具**：Vite
-- **富文本编辑器**：React Quill
-- **HTTP 客户端**：Axios
-- **数据存储**：GitHub Issues API
-- **路由管理**：React Router（隐式）
+## ✨ 功能特性
 
-## 项目结构
+### 核心功能
+- ✅ **任务管理** - 创建、编辑、删除待办事项
+- ✅ **任务状态** - 标记任务完成/未完成
+- ✅ **富文本编辑** - 支持格式化文本、列表、链接等
+- ✅ **标签系统** - 多标签分类，GitHub 标签颜色同步
+- ✅ **搜索过滤** - 快速查找任务
+- ✅ **数据持久化** - 基于 GitHub Issues API
+
+### UI/UX 特性
+- 🌓 **黑暗/白天模式** - 完整主题切换支持
+- 📱 **响应式设计** - 适配桌面和移动端
+- ✨ **现代化 UI** - 使用 Ant Design 组件库
+- 🎨 **动画效果** - 流畅的交互动画
+- 👁️ **优化视觉** - 高对比度、清晰可读
+
+## 🛠 技术栈
+
+### 前端框架
+- **React 18** - UI 框架
+- **Vite** - 构建工具和开发服务器
+- **Ant Design 4** - UI 组件库
+
+### 核心库
+- **Axios** - HTTP 客户端
+- **React Quill** - 富文本编辑器
+- **GitHub REST API** - 数据存储
+
+### 开发工具
+- **ESLint** - 代码质量检查
+- **CSS Variables** - 主题系统
+
+## 🏗 架构设计
+
+### 整体架构
+
+```mermaid
+graph TB
+    subgraph "用户界面层"
+        A[App.js] --> B[TodoList]
+        B --> C[TodoInput]
+        B --> D[TodoItem]
+    end
+
+    subgraph "状态管理层"
+        E[useTodos Hook]
+    end
+
+    subgraph "服务层"
+        F[todoService]
+    end
+
+    subgraph "数据层"
+        G[GitHub Issues API]
+    end
+
+    B --> E
+    C --> E
+    D --> E
+    E --> F
+    F --> G
+
+    style A fill:#6366f1,color:#fff
+    style B fill:#818cf8,color:#fff
+    style E fill:#a5b4fc,color:#000
+    style F fill:#c7d2fe,color:#000
+    style G fill:#e0e7ff,color:#000
+```
+
+### 组件架构
+
+```mermaid
+graph LR
+    subgraph "Components"
+        A[TodoList] --> B[TodoInput]
+        A --> C[TodoItem]
+    end
+
+    subgraph "Hooks"
+        D[useTodos]
+    end
+
+    subgraph "Services"
+        E[todoService]
+    end
+
+    B -.使用.-> D
+    C -.使用.-> D
+    D -.调用.-> E
+
+    style A fill:#6366f1,color:#fff
+    style B fill:#818cf8,color:#fff
+    style C fill:#818cf8,color:#fff
+    style D fill:#a5b4fc,color:#000
+    style E fill:#c7d2fe,color:#000
+```
+
+### 数据流
+
+```mermaid
+sequenceDiagram
+    participant U as 用户
+    participant C as TodoInput/TodoItem
+    participant H as useTodos Hook
+    participant S as todoService
+    participant API as GitHub API
+
+    U->>C: 创建/编辑任务
+    C->>H: addTodo({ text, body, labels })
+    H->>H: Optimistic Update
+    H->>S: createTodo({ title, body, labels })
+    S->>API: POST /repos/{owner}/{repo}/issues
+    API-->>S: 返回创建的 Issue
+    S-->>H: 返回任务数据
+    H->>H: 更新状态
+    H-->>C: 渲染新任务
+```
+
+## 🚀 快速开始
+
+### 前置要求
+
+- Node.js >= 14.0.0
+- npm 或 yarn
+- GitHub Personal Access Token
+
+### 安装步骤
+
+1. **克隆项目**
+```bash
+git clone <repository-url>
+cd todo-app
+```
+
+2. **安装依赖**
+```bash
+npm install
+```
+
+3. **配置 GitHub Token**
+
+编辑 `src/services/todoService.js`，替换你的 GitHub Token：
+
+```javascript
+const REPO_OWNER = 'your-username';
+const REPO_NAME = 'your-repo';
+// 配置你的 token
+```
+
+> ⚠️ **安全提醒**: 生产环境应使用后端代理，不要在客户端暴露 token
+
+4. **启动开发服务器**
+```bash
+npm run dev
+```
+
+5. **访问应用**
+```
+http://localhost:5173/todoApp/
+```
+
+### 构建生产版本
+
+```bash
+npm run build
+```
+
+## 📁 项目结构
 
 ```
-.
-├── src/                    # 源代码目录
-│   ├── components/        # React 组件
-│   │   ├── Analytics.js   # 数据分析组件
-│   │   ├── TodoInput.js   # 任务输入组件
-│   │   ├── TodoItem.js    # 任务项组件
-│   │   └── TodoList.js    # 任务列表组件
-│   ├── services/          # API 服务
-│   │   └── todoService.js # GitHub API 交互服务
-│   ├── App.css            # 主应用样式
-│   ├── App.js             # 主应用组件
-│   ├── index.css          # 全局样式
-│   └── index.js           # 应用入口文件
-├── public/                # 静态资源目录
-│   └── index.html         # HTML 模板
-├── index.html             # Vite 入口文件
-├── package.json           # 项目依赖和脚本
-└── vite.config.js         # Vite 配置文件
+todo-app/
+├── src/
+│   ├── components/          # React 组件
+│   │   ├── TodoList.js     # 任务列表容器
+│   │   ├── TodoInput.js    # 任务输入组件
+│   │   └── TodoItem.js     # 单个任务组件
+│   ├── hooks/              # 自定义 Hooks
+│   │   └── useTodos.js     # 任务管理 Hook
+│   ├── services/           # API 服务
+│   │   └── todoService.js  # GitHub API 集成
+│   ├── App.js              # 根组件
+│   ├── App.css             # 全局样式
+│   ├── index.js            # 入口文件
+│   └── index.css           # 基础样式
+├── index.html              # HTML 模板
+├── vite.config.js          # Vite 配置
+└── package.json            # 项目配置
 ```
 
-## 核心组件
+## 🎯 核心功能
 
-### App 组件
-主应用组件，包含整体布局和导航菜单。
+### 1. 任务管理
 
-### TodoList 组件
-任务列表组件，负责展示和过滤任务项。
+**创建任务**
+- 输入任务标题（必填）
+- 添加富文本描述（可选）
+- 选择多个标签（可选）
 
-### TodoItem 组件
-单个任务项组件，支持编辑、删除和状态切换。
+**编辑任务**
+- 点击编辑按钮进入编辑模式
+- 支持内联编辑标题和描述
+- 实时同步到 GitHub Issues
 
-### TodoInput 组件
-任务输入组件，支持添加新任务和富文本描述。
+**删除任务**
+- 二次确认删除操作
+- 永久删除对应的 GitHub Issue
 
-### Analytics 组件
-数据分析组件，提供任务统计和访客分析功能。
+### 2. 标签系统
 
-### TodoService 服务
-与 GitHub Issues API 交互的服务层。
+**标签功能**
+- 从 GitHub 仓库自动获取标签
+- 多标签选择
+- 标签颜色自动同步
+- 黑暗模式下优化可读性
 
-## 安装和运行
+**标签配置**
+在 GitHub 仓库中配置标签：
+1. 进入仓库 Settings > Labels
+2. 创建或编辑标签
+3. 设置标签名称和颜色
+4. 应用会自动同步
 
-1. 克隆项目：
-   ```bash
-   git clone <repository-url>
-   cd todo-app
-   ```
+### 3. 富文本编辑
 
-2. 安装依赖：
-   ```bash
-   npm install
-   ```
+使用 React Quill 编辑器，支持：
+- **文本格式**: 粗体、斜体、下划线、删除线
+- **标题**: H1, H2, H3
+- **列表**: 有序列表、无序列表
+- **链接**: 添加超链接
+- **清除格式**: 一键清除所有格式
 
-3. 配置环境变量：
-   ```bash
-   # 复制环境变量文件并填写相应信息
-   cp .env.example .env
-   ```
+### 4. 搜索过滤
 
-   在 `.env` 文件中配置以下变量：
-   - `VITE_GITHUB_TOKEN`: GitHub 个人访问令牌
-   - `VITE_REPO_OWNER`: GitHub 仓库所有者（用户名或组织名）
-   - `VITE_REPO_NAME`: GitHub 仓库名称
+- 实时搜索任务标题和内容
+- 按状态筛选（全部/未完成/已完成）
+- 高性能搜索实现
 
-4. 启动开发服务器：
-   ```bash
-   npm run dev
-   ```
+## 🎨 主题系统
 
-## 构建和部署
+### 颜色变量
 
-1. 构建生产版本：
-   ```bash
-   npm run build
-   ```
+```css
+:root {
+  --primary-color: #6366f1;      /* 主色调 */
+  --bg-body: #f3f4f6;            /* 背景色 */
+  --bg-card: #ffffff;            /* 卡片背景 */
+  --text-primary: #1f2937;       /* 主文本色 */
+  --border-color: #e5e7eb;       /* 边框色 */
+}
 
-2. 预览构建结果：
-   ```bash
-   npm run serve
-   ```
+[data-theme='dark'] {
+  --primary-color: #818cf8;
+  --bg-body: #111827;
+  --bg-card: #1f2937;
+  --text-primary: #f3f4f6;
+  --border-color: #374151;
+}
+```
 
-## GitHub API 集成
+### 主题切换
 
-本应用使用 GitHub Issues 作为数据存储后端，通过以下方式与 GitHub API 交互：
+主题状态保存在 `localStorage`，页面刷新后保持选择。
 
-- **认证**：使用 GitHub Personal Access Token 进行认证
-- **数据模型**：每个待办事项对应一个 GitHub Issue
-- **标签系统**：使用 `todo` 标签标识待办事项
-- **状态管理**：通过 Issue 的 `open/closed` 状态表示任务的进行中/已完成
+```javascript
+// 自动读取保存的主题
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+```
 
-## 设计原则
+## 🔌 API 集成
 
-1. **组件化设计**：React 组件可复用、可维护，遵循单一职责原则
-2. **可迭代性**：代码结构清晰，易于添加新功能
-3. **文件大小控制**：每个文件控制在合理行数范围内
-4. **用户体验**：提供流畅的交互体验和友好的界面设计
-5. **响应式布局**：适配不同屏幕尺寸的设备
-6. **数据安全**：敏感信息通过环境变量管理
+### GitHub Issues API
 
-## 数据流说明
+**端点配置**
+```javascript
+const API_BASE = 'https://api.github.com';
+const REPO_OWNER = 'your-username';
+const REPO_NAME = 'your-repo';
+```
 
-1. 应用启动时从 GitHub Issues 获取所有标记为 `todo` 的任务
-2. 用户操作（添加、编辑、删除、状态切换）通过 GitHub API 实时同步
-3. 数据分析组件实时计算并展示任务统计数据
-4. 访客统计数据为模拟数据，用于展示分析界面
+**主要 API 方法**
 
-## 注意事项
+| 方法 | 端点 | 说明 |
+|------|------|------|
+| `getTodos()` | `GET /repos/{owner}/{repo}/issues` | 获取所有任务 |
+| `createTodo()` | `POST /repos/{owner}/{repo}/issues` | 创建新任务 |
+| `updateTodo()` | `PATCH /repos/{owner}/{repo}/issues/{number}` | 更新任务 |
+| `deleteTodo()` | `PATCH /repos/{owner}/{repo}/issues/{number}` | 删除任务（关闭） |
+| `getLabels()` | `GET /repos/{owner}/{repo}/labels` | 获取标签列表 |
 
-- 需要有效的 GitHub Personal Access Token 才能正常使用应用
-- 应用的性能受 GitHub API 速率限制影响
-- 所有数据存储在指定的 GitHub 仓库中
+**数据映射**
+
+GitHub Issue → Todo Item:
+```javascript
+{
+  id: issue.id,
+  githubNumber: issue.number,
+  text: issue.title,
+  body: issue.body,
+  labels: issue.labels.map(l => ({ id, name, color })),
+  completed: issue.state === 'closed',
+  createdAt: issue.created_at,
+  updatedAt: issue.updated_at
+}
+```
+
+## 💻 开发指南
+
+### 本地开发
+
+```bash
+# 安装依赖
+npm install
+
+# 启动开发服务器（支持热更新）
+npm run dev
+
+# 构建生产版本
+npm run build
+
+# 预览生产构建
+npm run preview
+```
+
+### 代码规范
+
+- 使用 ESLint 进行代码检查
+- 遵循 React Hooks 最佳实践
+- 组件采用函数式编程
+- 使用 CSS 变量实现主题
+
+### 性能优化
+
+1. **代码分割**: Vite 自动进行代码分割
+2. **懒加载**: 组件按需加载
+3. **Memo 优化**: 使用 `useCallback` 和 `useMemo`
+4. **乐观更新**: UI 先更新，后同步 API
+
+### 调试
+
+启用调试日志：
+```javascript
+// useTodos.js 中已添加详细日志
+console.log('[addTodo] Starting with:', { text, body, labels });
+```
+
+## 🖼️ 应用截图
+
+### 白天模式
+![Light Mode](/Users/zcy/.gemini/antigravity/brain/f7697bfc-1038-4c58-a065-ceb00c4cfb3e/light_mode_complete_1763715481542.png)
+
+### 黑暗模式
+![Dark Mode](/Users/zcy/.gemini/antigravity/brain/f7697bfc-1038-4c58-a065-ceb00c4cfb3e/dark_mode_tags_improved_1763715797730.png)
+
+### 标签选择器
+![Tag Selector](/Users/zcy/.gemini/antigravity/brain/f7697bfc-1038-4c58-a065-ceb00c4cfb3e/tag_selector_with_colors_1763715299009.png)
+
+## 🔒 安全建议
+
+### Token 安全
+
+**当前实现（开发环境）**:
+- Token 在客户端代码中（不安全）
+- 仅适用于个人开发和测试
+
+**生产环境建议**:
+```mermaid
+graph LR
+    A[前端应用] --> B[后端代理服务器]
+    B --> C[GitHub API]
+
+    style A fill:#6366f1,color:#fff
+    style B fill:#818cf8,color:#fff
+    style C fill:#a5b4fc,color:#000
+```
+
+实现后端代理：
+```javascript
+// Express 示例
+app.post('/api/todos', async (req, res) => {
+  const response = await axios.post(
+    `https://api.github.com/repos/${owner}/${repo}/issues`,
+    req.body,
+    {
+      headers: {
+        Authorization: `token ${process.env.GITHUB_TOKEN}`
+      }
+    }
+  );
+  res.json(response.data);
+});
+```
+
+## 🚦 路线图
+
+### 已完成 ✅
+- [x] 基础任务 CRUD
+- [x] 富文本编辑
+- [x] 标签系统
+- [x] 黑暗模式
+- [x] 响应式设计
+- [x] 搜索过滤
+- [x] 乐观更新
+
+### 计划中 📋
+- [ ] 任务截止日期
+- [ ] 日历视图
+- [ ] 拖拽排序
+- [ ] 任务优先级
+- [ ] 批量操作
+- [ ] 导出功能
+- [ ] 任务统计
+- [ ] 后端代理（安全性）
+
+## 🤝 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+## 📄 许可证
+
+MIT License
+
+---
+
+**开发者**: [Your Name]
+
+**最后更新**: 2025-11-21

@@ -4,9 +4,9 @@
   --primary-hover: #4f46e5;
   --primary-light: #e0e7ff;
 
-  --text-primary: #1f2937; /* Gray 800 */
-  --text-secondary: #4b5563; /* Gray 600 */
-  --text-tertiary: #9ca3af; /* Gray 400 */
+  --text-primary: #111827; /* Gray 900 - Darker for better visibility */
+  --text-secondary: #374151; /* Gray 700 - Darker */
+  --text-tertiary: #6b7280; /* Gray 500 - Darker */
 
   --bg-body: #f3f4f6; /* Gray 100 */
   --bg-card: #ffffff;
@@ -64,7 +64,7 @@ body {
 }
 
 .app-header {
-  background: var(--bg-card);
+  background: var(--bg-card) !important;
   border-bottom: 1px solid var(--border-color);
   padding: 0 var(--spacing-xl);
   height: 64px;
@@ -74,6 +74,12 @@ body {
   top: 0;
   z-index: 50;
   box-shadow: var(--shadow-sm);
+}
+
+/* Ensure Ant Design Header respects theme */
+.ant-layout-header.app-header {
+  background: var(--bg-card) !important;
+  line-height: 64px;
 }
 
 .header-content {
@@ -100,9 +106,14 @@ body {
 
 .app-title {
   font-size: 1.25rem !important;
-  font-weight: 700 !important;
-  color: var(--text-primary) !important;
+  font-weight: 800 !important;
+  color: #111827 !important; /* Darker color for better visibility in light mode */
   margin: 0 !important;
+}
+
+/* Dark mode title color */
+[data-theme='dark'] .app-title {
+  color: #f9fafb !important; /* Brighter white for dark mode */
 }
 
 /* 主体布局 */
@@ -401,6 +412,7 @@ body {
 .ant-input::placeholder,
 .ant-input-affix-wrapper input::placeholder {
   color: var(--text-tertiary) !important;
+  opacity: 1 !important;
 }
 
 .ant-input:hover,
@@ -467,7 +479,8 @@ body {
 .ant-btn {
   border-color: var(--border-color) !important;
   color: var(--text-primary) !important;
-  background: transparent !important;
+  background: var(--bg-card) !important;
+  font-weight: 500 !important;
 }
 
 .ant-btn:not(.ant-btn-primary):not(.ant-btn-text):hover {
@@ -477,12 +490,14 @@ body {
 }
 
 .ant-btn-primary {
-  background-color: var(--primary-color) !important;
+  background: var(--primary-color) !important;
   border-color: var(--primary-color) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
 }
 
 .ant-btn-primary:hover {
-  background-color: var(--primary-hover) !important;
+  background: var(--primary-hover) !important;
   border-color: var(--primary-hover) !important;
 }
 
@@ -556,24 +571,37 @@ body {
   color: var(--text-tertiary) !important;
 }
 
-/* Fix tags in dark mode */
+/* Fix tags in dark mode - ensure high contrast */
 [data-theme='dark'] .ant-tag {
-  border-color: rgba(255, 255, 255, 0.2) !important;
-  background-color: rgba(255, 255, 255, 0.15) !important;
-  color: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
 }
 
 /* Ensure tag text is always visible in dark mode */
 [data-theme='dark'] .ant-tag[class*="ant-tag-"] {
-  color: rgba(255, 255, 255, 0.95) !important;
-  font-weight: 500;
+  color: #ffffff !important;
+  font-weight: 600;
 }
 
-/* For colored tags, ensure text contrast */
+/* For colored tags in dark mode, ensure text contrast */
 [data-theme='dark'] .ant-tag[color] {
-  background-color: rgba(var(--tag-bg-rgb, 255, 255, 255), 0.2) !important;
-  border-color: rgba(var(--tag-bg-rgb, 255, 255, 255), 0.3) !important;
-  color: rgba(255, 255, 255, 0.95) !important;
+  background-color: rgba(255, 255, 255, 0.25) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Fix tags in light mode - ensure contrast on light backgrounds */
+.ant-tag[color] {
+  font-weight: 600 !important;
+}
+
+/* For light colored tags, use dark text */
+.ant-tag {
+  font-weight: 500;
 }
 
 /* Fix Select tags in dark mode */
