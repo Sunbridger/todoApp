@@ -13,20 +13,22 @@ const CustomInput = ({ value, onChange, placeholder, ...props }) => {
       placeholder={placeholder}
       style={{
         width: '100%',
-        padding: '8px 12px',
-        borderRadius: '6px',
-        border: '1px solid #d9d9d9',
-        fontSize: '14px',
+        padding: '16px 20px',
+        borderRadius: '12px',
+        border: '1px solid #e0e0e0',
+        fontSize: '16px',
         transition: 'all 0.3s',
         outline: 'none',
+        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+        fontWeight: '500'
       }}
       onFocus={(e) => {
-        e.target.style.borderColor = '#40a9ff';
-        e.target.style.boxShadow = '0 0 0 2px rgba(24, 144, 255, 0.2)';
+        e.target.style.borderColor = '#4361ee';
+        e.target.style.boxShadow = '0 0 0 3px rgba(67, 97, 238, 0.2)';
       }}
       onBlur={(e) => {
-        e.target.style.borderColor = '#d9d9d9';
-        e.target.style.boxShadow = 'none';
+        e.target.style.borderColor = '#e0e0e0';
+        e.target.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.05)';
       }}
       {...props}
     />
@@ -79,11 +81,16 @@ const TodoInput = ({ onAdd }) => {
   return (
     <Card
       style={{
-        marginBottom: 24,
-        borderRadius: 8,
-        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.02)'
+        marginBottom: 28,
+        borderRadius: 16,
+        boxShadow: '0 6px 16px rgba(0, 0, 0, 0.08)',
+        border: '1px solid #e0e0e0',
+        background: 'linear-gradient(135deg, #ffffff 0%, #fafafa 100%)'
       }}
-      bodyStyle={{ padding: 20 }}
+      bodyStyle={{
+        padding: '30px',
+        borderRadius: '16px'
+      }}
     >
       <Spin spinning={loading}>
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
@@ -92,14 +99,23 @@ const TodoInput = ({ onAdd }) => {
           rules={[{ required: true, message: '请输入任务标题' }]}
         >
           <CustomInput
-            placeholder="任务标题"
+            placeholder="输入任务标题..."
           />
         </Form.Item>
 
         {isExpanded && (
           <Form.Item
             name="description"
-            label="任务描述"
+            label={
+              <span style={{
+                fontWeight: '600',
+                color: '#424242',
+                fontSize: '16px'
+              }}>
+                任务描述
+              </span>
+            }
+            style={{ marginTop: 20 }}
           >
             <ReactQuill
               theme="snow"
@@ -109,36 +125,56 @@ const TodoInput = ({ onAdd }) => {
               formats={formats}
               style={{
                 backgroundColor: '#fff',
-                borderRadius: 6
+                borderRadius: '12px',
+                border: '1px solid #e0e0e0',
+                overflow: 'hidden'
               }}
               placeholder="添加任务的详细描述..."
             />
           </Form.Item>
         )}
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginTop: 24,
+          paddingTop: 20,
+          borderTop: '1px solid #f0f0f0'
+        }}>
           <Button
             type="link"
             onClick={() => setIsExpanded(!isExpanded)}
-            style={{ padding: 0 }}
+            style={{
+              padding: 0,
+              fontSize: 16,
+              fontWeight: 600,
+              color: '#4361ee',
+              height: 'auto',
+              lineHeight: 'normal'
+            }}
           >
             {isExpanded ? '︽ 收起详细编辑' : '︾ 展开详细编辑'}
           </Button>
 
-          <Form.Item noStyle>
-            <Button
-              type="primary"
-              htmlType="submit"
-              icon={<PlusOutlined />}
-              size="large"
-              style={{
-                borderRadius: 6,
-                fontWeight: 500
-              }}
-            >
-              添加任务
-            </Button>
-          </Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            icon={<PlusOutlined />}
+            size="large"
+            style={{
+              borderRadius: 10,
+              fontWeight: 600,
+              padding: '0 36px',
+              height: 48,
+              boxShadow: '0 4px 8px rgba(67, 97, 238, 0.3)',
+              fontSize: 16,
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            添加任务
+          </Button>
         </div>
       </Form>
       </Spin>

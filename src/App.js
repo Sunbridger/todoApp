@@ -3,16 +3,12 @@ import { Layout, Typography, Menu, Card, Avatar, Badge } from 'antd';
 import {
   FileOutlined,
   CheckSquareOutlined,
-  CalendarOutlined,
-  BarChartOutlined,
-  RocketOutlined
+  RocketOutlined,
+  BarChartOutlined
 } from '@ant-design/icons';
 import TodoList from './components/TodoList';
 import Analytics from './components/Analytics';
 import './App.css';
-
-// eslint-disable-next-line no-unused-vars
-import { useClient } from 'react';
 
 const { Header, Sider, Content } = Layout;
 const { Title } = Typography;
@@ -48,7 +44,7 @@ function App() {
       <div className="app-header">
         <div className="header-content">
           <div className="app-logo">
-            ✅
+            ✓
           </div>
           <Title level={3} className="app-title">
             现代化待办清单
@@ -56,10 +52,16 @@ function App() {
         </div>
       </div>
       <Layout hasSider className="main-layout">
-        <Sider width={240} className="app-sider">
+        <Sider width={260} className="app-sider">
           <div className="menu-header">
             <Badge count={1243} showZero className="visitor-badge">
-              <Avatar shape="square" size="large" icon={<BarChartOutlined />} />
+              <Avatar
+                shape="square"
+                size="large"
+                style={{ backgroundColor: '#4361ee' }}
+              >
+                <BarChartOutlined />
+              </Avatar>
             </Badge>
             <div className="menu-header-text">
               <div>访客统计</div>

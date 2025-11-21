@@ -5,13 +5,10 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f0f2f5;
   min-height: 100vh;
   overflow-x: hidden;
-  color: #333;
-  .ant-layout {
-    background-color: unset;
-  }
+  color: #212121;
 }
 
 * {
@@ -25,22 +22,22 @@ code {
 
 /* 滚动条样式优化 */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.25);
 }
 
 /* 动画相关 */
@@ -71,14 +68,15 @@ code {
 .markdown-content h3 {
   margin-top: 1em;
   margin-bottom: 0.5em;
-  color: #333;
+  color: #212121;
+  font-weight: 600;
 }
 
 .markdown-content p {
   margin-top: 0;
   margin-bottom: 1em;
-  line-height: 1.6;
-  color: #555;
+  line-height: 1.7;
+  color: #424242;
 }
 
 .markdown-content ul,
@@ -90,33 +88,161 @@ code {
 
 .markdown-content li {
   margin-bottom: 0.5em;
-  color: #555;
+  color: #424242;
 }
 
 .markdown-content code {
-  background-color: rgba(0, 0, 0, 0.06);
+  background-color: rgba(67, 97, 238, 0.1);
   padding: 0.2em 0.4em;
-  border-radius: 3px;
+  border-radius: 4px;
   font-size: 0.9em;
-  color: #333;
+  color: #3f37c9;
 }
 
 .markdown-content pre {
-  background-color: rgba(0, 0, 0, 0.06);
+  background-color: #f8f9fa;
   padding: 1em;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow-x: auto;
-  color: #333;
+  color: #212121;
+  border: 1px solid #e9ecef;
 }
 
 .markdown-content blockquote {
   margin: 0 0 1em;
   padding: 0 1em;
-  border-left: 4px solid #ddd;
-  color: #666;
+  border-left: 4px solid #4361ee;
+  color: #424242;
+  background: #f8f9fa;
+  padding: 1em;
+  border-radius: 0 8px 8px 0;
 }
 
 .ant-menu-inline .ant-menu-item,
 .ant-menu-inline .ant-menu-submenu-title {
   width: unset !important;
+}
+
+/* 卡片样式优化 */
+.ant-card {
+  border-radius: 16px !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid #e0e0e0 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ant-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  transform: translateY(-2px);
+}
+
+.ant-card-body {
+  padding: 32px !important;
+}
+
+/* 按钮样式优化 */
+.ant-btn {
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.ant-btn:hover {
+  transform: translateY(-1px) !important;
+}
+
+.ant-btn-primary {
+  box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3) !important;
+}
+
+/* 输入框样式优化 */
+.ant-input,
+.ant-input-affix-wrapper {
+  border-radius: 12px !important;
+  border: 1px solid #e0e0e0 !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  font-weight: 500;
+}
+
+.ant-input:focus,
+.ant-input-affix-wrapper:focus,
+.ant-input:focus-within,
+.ant-input-affix-wrapper:focus-within {
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2) !important;
+  border-color: #4361ee !important;
+}
+
+/* 菜单样式优化 */
+.ant-menu-inline {
+  border-right: none !important;
+}
+
+.ant-menu-item {
+  border-radius: 10px !important;
+  margin: 6px 16px !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  font-weight: 500;
+}
+
+/* 表单样式优化 */
+.ant-form-item {
+  margin-bottom: 28px !important;
+}
+
+.ant-form-item-label > label {
+  font-weight: 600 !important;
+  color: #212121 !important;
+  font-size: 16px !important;
+}
+
+.ant-form-vertical .ant-form-item-label {
+  padding: 0 0 10px !important;
+}
+
+/* 搜索框样式优化 */
+.ant-input-affix-wrapper {
+  padding: 10px 16px !important;
+  font-size: 15px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  background-color: #fff !important;
+}
+
+.ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
+  border-color: #4361ee !important;
+}
+
+/* 去除搜索框内输入框的边框 */
+.ant-input-affix-wrapper > .ant-input {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  body {
+    font-size: 15px;
+  }
+
+  .ant-card {
+    border-radius: 12px !important;
+  }
+
+  .ant-btn {
+    border-radius: 8px !important;
+  }
+
+  .ant-input,
+  .ant-input-affix-wrapper {
+    border-radius: 10px !important;
+  }
+
+  .ant-card-body {
+    padding: 24px !important;
+  }
+
+  .ant-input-affix-wrapper {
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+  }
 }

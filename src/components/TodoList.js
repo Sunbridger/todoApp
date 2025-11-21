@@ -9,7 +9,7 @@ import {
   updateTodo,
   deleteTodo,
 } from '../services/todoService';
-
+2
 const { Title } = Typography;
 
 const TodoList = React.memo(({ filter }) => {
@@ -123,52 +123,43 @@ const TodoList = React.memo(({ filter }) => {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 24,
         flexWrap: 'wrap',
-        gap: 12
+        gap: 16
       }}>
         <Title
           level={4}
           style={{
             margin: 0,
-            color: '#333',
-            fontWeight: 800,
-            fontSize: 24,
+            color: '#212121',
+            fontWeight: 700,
+            fontSize: 26,
           }}
         >
           {getTitle()}
         </Title>
-        <div style={{ flex: 1, maxWidth: 300, position: 'relative' }}>
-          <input
-            type="text"
+        <div style={{ flex: 1, maxWidth: 320, position: 'relative' }}>
+          <Input
             placeholder="搜索任务..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            prefix={<SearchOutlined style={{ color: '#757575' }} />}
             style={{
-              width: '100%',
-              padding: '8px 12px 8px 36px',
-              borderRadius: '18px',
-              border: '1px solid #d9d9d9',
-              fontSize: '14px',
-              transition: 'all 0.3s',
-              outline: 'none',
+              borderRadius: 12,
+              padding: '10px 16px',
+              fontSize: 15,
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+              border: '1px solid #e0e0e0',
+              backgroundColor: '#fff',
+              transition: 'all 0.3s'
             }}
             onFocus={(e) => {
-              e.target.style.borderColor = '#40a9ff';
-              e.target.style.boxShadow = '0 0 0 2px rgba(24, 144, 255, 0.2)';
+              e.target.parentElement.style.boxShadow = '0 0 0 2px rgba(67, 97, 238, 0.2)';
+              e.target.parentElement.style.borderColor = '#4361ee';
             }}
             onBlur={(e) => {
-              e.target.style.borderColor = '#d9d9d9';
-              e.target.style.boxShadow = 'none';
-            }}
-          />
-          <SearchOutlined
-            style={{
-              position: 'absolute',
-              left: 12,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: '#bfbfbf'
+              e.target.parentElement.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.05)';
+              e.target.parentElement.style.borderColor = '#e0e0e0';
             }}
           />
         </div>
@@ -189,7 +180,7 @@ const TodoList = React.memo(({ filter }) => {
         )}
         style={{
           background: 'transparent',
-          paddingTop: 20,
+          paddingTop: 24,
         }}
       />
     </div>
