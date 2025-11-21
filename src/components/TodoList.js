@@ -8,7 +8,7 @@ import { useTodos } from '../hooks/useTodos';
 const { Title } = Typography;
 
 const TodoList = React.memo(({ filter }) => {
-  const { todos, loading, addTodo, updateTodo, deleteTodo } = useTodos();
+  const { todos, labels, loading, addTodo, updateTodo, deleteTodo } = useTodos();
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
@@ -77,7 +77,7 @@ const TodoList = React.memo(({ filter }) => {
         </div>
       </div>
 
-      <TodoInput onAdd={handleAddTodo} />
+      <TodoInput onAdd={handleAddTodo} availableLabels={labels} />
 
       <List
         loading={false} // Disable default loading to use custom Skeleton

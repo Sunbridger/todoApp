@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Checkbox, Button, Input, message, Popconfirm } from 'antd';
+import { Checkbox, Button, Input, message, Popconfirm, Tag } from 'antd';
   // ... existing imports
 import {
   DeleteOutlined,
@@ -111,6 +111,28 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
           <div className={`todo-title ${todo.completed ? 'completed' : ''}`}>
             {title}
           </div>
+
+          {/* Tags Display */}
+          {todo.labels && todo.labels.length > 0 && (
+            <div style={{ marginBottom: 8, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+              {todo.labels.map((label, index) => {
+                // If label is a string, use default color; if object, use label.color
+                const labelName = typeof label === 'string' ? label : label.name;
+                const labelColor = typeof label === 'object' && label.color ? `#${label.color}` : undefined;
+                return (
+                  <Tag
+                    key={label.id || labelName || index}
+                    color={labelColor}
+                    style={{ marginRight: 0 }}
+                  >
+                    {labelName}
+                  </Tag>
+                );
+              })}
+            </div>
+          )}
+
+
           {content && (
             <div className="todo-body-wrapper">
               <div

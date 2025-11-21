@@ -1,135 +1,123 @@
 import { useState, useEffect, useCallback } from 'react';
+import todoService from '../services/todoService';
 import { message } from 'antd';
-import {
-  getTodos,
-  createTodo,
-  updateTodo as updateTodoService,
-  deleteTodo as deleteTodoService,
-} from '../services/todoService';
 
 export const useTodos = () => {
   const [todos, setTodos] = useState([]);
+  const [labels, setLabels] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchTodos = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await getTodos();
+      const data = await todoService.getTodos();
       setTodos(data);
     } catch (error) {
-      message.error('获取待办事项失败: ' + error.message);
+      message.error('获取待办事项失败');
     } finally {
       setLoading(false);
     }
   }, []);
 
+  const fetchLabels = useCallback(async () => {
+    try {
+      const data = await todoService.getLabels();
+      setLabels(data);
+    } catch (error) {
+      console.error('Failed to fetch labels');
+    }
+  }, []);
+
   useEffect(() => {
     fetchTodos();
-  }, [fetchTodos]);
+    fetchLabels();
+  }, [fetchTodos, fetchLabels]);
 
-  const addTodo = useCallback(async (todoData) => {
-    // 乐观更新：先在本地添加一个临时状态
+  const addTodo = useCallback(async ({ text, body, labels: todoLabels }) => {
+    console.log('[addTodo] Starting with:', { text, body, labels: todoLabels });
+    // Optimistic update
     const tempId = Date.now();
-    const tempTodo = {
+    const newTodo = {
       id: tempId,
-      text: todoData.title,
-      body: todoData.description || '',
+      text,
+      body,
       completed: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      isTemp: true, // 标记为临时数据
+      labels: todoLabels || [],
+      loading: true
     };
 
-    setTodos((prev) => [tempTodo, ...prev]);
+    setTodos(prev => [newTodo, ...prev]);
 
     try {
-      const newTodo = await createTodo({
-        title: todoData.title,
-        body: todoData.description,
-      });
-
-      // 请求成功，用真实数据替换临时数据
-      setTodos((prev) =>
-        prev.map((todo) => (todo.id === tempId ? newTodo : todo))
-      );
+      console.log('[addTodo] Calling createTodo with:', { title: text, body, labels: todoLabels });
+      const createdTodo = await todoService.createTodo({ title: text, body, labels: todoLabels });
+      console.log('[addTodo] createTodo returned:', createdTodo);
+      setTodos(prev => prev.map(todo =>
+        todo.id === tempId ? createdTodo : todo
+      ));
       message.success('添加成功');
     } catch (error) {
-      // 请求失败，移除临时数据
-      setTodos((prev) => prev.filter((todo) => todo.id !== tempId));
-      message.error('添加失败: ' + error.message);
+      console.error('[addTodo] Error:', error);
+      setTodos(prev => prev.filter(todo => todo.id !== tempId));
+      message.error(error.message || '添加失败');
     }
   }, []);
 
   const updateTodo = useCallback(async (id, updates) => {
-    // 乐观更新：先保存旧状态，然后立即更新 UI
+    // Optimistic update
     let previousTodo;
-    setTodos((prev) => {
-      const todoToUpdate = prev.find((t) => t.id === id);
+    setTodos(prev => {
+      const todoToUpdate = prev.find(t => t.id === id);
       if (todoToUpdate) {
         previousTodo = todoToUpdate;
-        return prev.map((t) =>
-          t.id === id ? { ...t, ...updates, text: updates.text || t.text, completed: updates.completed !== undefined ? updates.completed : t.completed } : t
+        return prev.map(t =>
+          t.id === id ? { ...t, ...updates } : t
         );
       }
       return prev;
     });
 
     try {
-      const updatedTodo = await updateTodoService(id, updates);
-      // 确保使用服务器返回的最新数据（虽然乐观更新已经更新了 UI，但服务器可能返回更多字段或格式化后的数据）
-      setTodos((prev) =>
-        prev.map((todo) => (todo.id === id ? updatedTodo : todo))
-      );
+      await todoService.updateTodo(id, updates);
       message.success('更新成功');
     } catch (error) {
-      // 失败回滚
+      // Revert on failure
       if (previousTodo) {
-        setTodos((prev) =>
-          prev.map((todo) => (todo.id === id ? previousTodo : todo))
-        );
+        setTodos(prev => prev.map(todo =>
+          todo.id === id ? previousTodo : todo
+        ));
       }
-      message.error('更新失败: ' + error.message);
+      message.error('更新失败');
+      fetchTodos();
     }
-  }, []);
+  }, [fetchTodos]);
 
   const deleteTodo = useCallback(async (id) => {
-    // 乐观更新：先保存旧状态，然后立即移除
-    let previousTodo;
-    let previousIndex;
-    setTodos((prev) => {
-      const index = prev.findIndex((t) => t.id === id);
-      if (index !== -1) {
-        previousTodo = prev[index];
-        previousIndex = index;
-        const newTodos = [...prev];
-        newTodos.splice(index, 1);
-        return newTodos;
-      }
-      return prev;
+    // Optimistic update
+    let previousTodos;
+    setTodos(prev => {
+      previousTodos = [...prev];
+      return prev.filter(todo => todo.id !== id);
     });
 
     try {
-      await deleteTodoService(id);
+      await todoService.deleteTodo(id);
       message.success('删除成功');
     } catch (error) {
-      // 失败回滚
-      if (previousTodo) {
-        setTodos((prev) => {
-          const newTodos = [...prev];
-          newTodos.splice(previousIndex, 0, previousTodo);
-          return newTodos;
-        });
+      if (previousTodos) {
+        setTodos(previousTodos);
       }
-      message.error('删除失败: ' + error.message);
+      message.error('删除失败');
     }
   }, []);
 
   return {
     todos,
+    labels,
     loading,
     addTodo,
     updateTodo,
     deleteTodo,
-    refresh: fetchTodos,
+    refreshTodos: fetchTodos
   };
 };

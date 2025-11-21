@@ -1,37 +1,49 @@
-import React, { useState, Suspense } from 'react';
-import { Layout, Typography, Menu, Spin, Skeleton } from 'antd';
+import React, { useState, Suspense, useEffect } from 'react';
+import { Layout, Menu, Button, Skeleton } from 'antd';
 import {
-  FileOutlined,
-  CheckSquareOutlined,
-  RocketOutlined,
+  UnorderedListOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
   BarChartOutlined,
+  BulbOutlined,
+  BulbFilled,
   UserOutlined
 } from '@ant-design/icons';
 import TodoList from './components/TodoList';
 import './App.css';
 
-// 懒加载 Analytics 组件
+// Lazy load Analytics component
 const Analytics = React.lazy(() => import('./components/Analytics'));
 
-const { Title } = Typography;
+const { Header, Sider, Content } = Layout;
 
-function App() {
+const App = () => {
   const [selectedKey, setSelectedKey] = useState('all');
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
 
   const menuItems = [
     {
       key: 'all',
-      icon: <FileOutlined />,
+      icon: <UnorderedListOutlined />,
       label: '所有任务',
     },
     {
       key: 'active',
-      icon: <RocketOutlined />,
+      icon: <ClockCircleOutlined />,
       label: '进行中',
     },
     {
       key: 'completed',
-      icon: <CheckSquareOutlined />,
+      icon: <CheckCircleOutlined />,
       label: '已完成',
     },
     {
@@ -41,60 +53,58 @@ function App() {
     }
   ];
 
-  return (
-    <div className="app-layout">
-      <header className="app-header">
-        <div className="header-content">
-          <div className="app-logo">
-            ✓
-          </div>
-          <Title level={3} className="app-title">
-            现代化待办清单
-          </Title>
-        </div>
-      </header>
+  const renderContent = () => {
+    if (selectedKey === 'analytics') {
+      return (
+        <Suspense fallback={<div style={{ padding: 24 }}><Skeleton active /></div>}>
+          <Analytics />
+        </Suspense>
+      );
+    }
+    return <TodoList filter={selectedKey} />;
+  };
 
-      <main className="main-layout">
-        <aside className="app-sider">
+  return (
+    <Layout className="app-layout">
+      <Header className="app-header">
+        <div className="header-content">
+          <div className="app-logo">T</div>
+          <h1 className="app-title">现代化待办清单</h1>
+          <Button
+            type="text"
+            icon={theme === 'light' ? <BulbOutlined /> : <BulbFilled />}
+            onClick={toggleTheme}
+            style={{ marginLeft: 'auto', color: 'var(--text-primary)' }}
+          />
+        </div>
+      </Header>
+
+      <Layout className="main-layout">
+        <Sider width={260} className="app-sider">
           <div className="visitor-card">
             <UserOutlined style={{ fontSize: '24px' }} />
             <div className="visitor-info">
               <h4>今日访客</h4>
-              <p>1,243</p>
+              <p>1,234</p>
             </div>
           </div>
-
           <div className="menu-card">
             <Menu
               mode="inline"
-              defaultSelectedKeys={['all']}
               selectedKeys={[selectedKey]}
-              onSelect={({ key }) => setSelectedKey(key)}
+              onClick={({ key }) => setSelectedKey(key)}
               items={menuItems}
             />
           </div>
-        </aside>
-
-        <div className="content-layout">
+        </Sider>
+        <Content className="content-layout">
           <div className="todo-container">
-            {selectedKey === 'analytics' ? (
-              <div className="analytics-wrapper slide-in">
-                <Suspense fallback={
-                  <div style={{ padding: '24px', background: 'white', borderRadius: '16px' }}>
-                    <Skeleton active paragraph={{ rows: 6 }} />
-                  </div>
-                }>
-                  <Analytics />
-                </Suspense>
-              </div>
-            ) : (
-              <TodoList filter={selectedKey} />
-            )}
+            {renderContent()}
           </div>
-        </div>
-      </main>
-    </div>
+        </Content>
+      </Layout>
+    </Layout>
   );
-}
+};
 
 export default App;

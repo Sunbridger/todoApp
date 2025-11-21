@@ -48,6 +48,11 @@ export const getTodos = async () => {
         githubNumber: issue.number,
         text: issue.title,
         body: issue.body || '',
+        labels: issue.labels ? issue.labels.map(l => ({
+          id: l.id,
+          name: l.name,
+          color: l.color
+        })) : [],
         completed: issue.state === 'closed',
         createdAt: issue.created_at,
         updatedAt: issue.updated_at
@@ -60,7 +65,7 @@ export const getTodos = async () => {
 };
 
 // 创建待办事项
-export const createTodo = async ({ title, body }) => {
+export const createTodo = async ({ title, body, labels }) => {
   try {
     // 如果标题太长，截取并添加省略号
     if (title.length > 250) {
@@ -69,7 +74,7 @@ export const createTodo = async ({ title, body }) => {
 
     const requestData = {
       title: title,
-      labels: ['todo']
+      labels: labels && labels.length > 0 ? ['todo', ...labels] : ['todo']
     };
 
     // 如果有详细内容，添加到body中
@@ -84,6 +89,7 @@ export const createTodo = async ({ title, body }) => {
       githubNumber: response.data.number,
       text: response.data.title,
       body: response.data.body || '',
+      labels: response.data.labels ? response.data.labels.map(l => l.name) : [],
       completed: false,
       createdAt: response.data.created_at,
       updatedAt: response.data.updated_at
@@ -130,6 +136,13 @@ export const updateTodo = async (id, updates) => {
       updateData.state = updates.completed ? 'closed' : 'open';
     }
 
+    // 如果要更新标签
+    if (updates.labels !== undefined) {
+      // 确保 'todo' 标签始终存在
+      updateData.labels = Array.from(new Set(['todo', ...updates.labels]));
+    }
+
+
     const response = await axiosInstance.patch(
       `/repos/${REPO_OWNER}/${REPO_NAME}/issues/${todo.githubNumber}`,
       updateData
@@ -142,7 +155,8 @@ export const updateTodo = async (id, updates) => {
       body: response.data.body || '',
       completed: response.data.state === 'closed',
       createdAt: response.data.created_at,
-      updatedAt: response.data.updated_at
+      updatedAt: response.data.updated_at,
+      labels: response.data.labels.map(label => label.name) // 返回标签
     };
   } catch (error) {
     // eslint-disable-next-line no-throw-before-return
@@ -162,7 +176,7 @@ export const deleteTodo = async (id) => {
 
     // 使用GitHub GraphQL API真正删除Issue
     const graphqlEndpoint = 'https://api.github.com/graphql';
-    
+
     // 首先需要获取Issue的GraphQL ID
     const graphqlQuery = `
       query GetIssueId($owner: String!, $name: String!, $number: Int!) {
@@ -173,7 +187,7 @@ export const deleteTodo = async (id) => {
         }
       }
     `;
-    
+
     const response = await axios.post(graphqlEndpoint, {
       query: graphqlQuery,
       variables: {
@@ -187,13 +201,13 @@ export const deleteTodo = async (id) => {
         'Accept': 'application/vnd.github.v3+json'
       }
     });
-    
+
     if (response.data.errors) {
       throw new Error(response.data.errors[0].message);
     }
-    
+
     const issueId = response.data.data.repository.issue.id;
-    
+
     // 然后使用deleteIssue突变删除Issue
     const deleteMutation = `
       mutation DeleteIssue($issueId: ID!) {
@@ -202,7 +216,7 @@ export const deleteTodo = async (id) => {
         }
       }
     `;
-    
+
     const deleteResponse = await axios.post(graphqlEndpoint, {
       query: deleteMutation,
       variables: {
@@ -214,14 +228,33 @@ export const deleteTodo = async (id) => {
         'Accept': 'application/vnd.github.v3+json'
       }
     });
-    
+
     if (deleteResponse.data.errors) {
       throw new Error(deleteResponse.data.errors[0].message);
     }
-    
+
     return { success: true };
   } catch (error) {
     // eslint-disable-next-line no-throw-before-return
     throw new Error(error.response?.data?.message || error.message || '删除待办事项失败');
   }
+};
+
+// 获取标签列表
+export const getLabels = async () => {
+  try {
+    const response = await axiosInstance.get(`/repos/${REPO_OWNER}/${REPO_NAME}/labels`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || '获取标签失败');
+  }
+};
+
+// Default export
+export default {
+  getTodos,
+  createTodo,
+  updateTodo,
+  deleteTodo,
+  getLabels
 };

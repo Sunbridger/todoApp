@@ -29,6 +29,26 @@
   --spacing-xl: 2rem;
 }
 
+[data-theme='dark'] {
+  --primary-color: #818cf8; /* Indigo 400 - Dark mode primary */
+  --primary-hover: #6366f1;
+  --primary-light: rgba(99, 102, 241, 0.15);
+
+  --text-primary: #f3f4f6; /* Gray 100 */
+  --text-secondary: #d1d5db; /* Gray 300 */
+  --text-tertiary: #9ca3af; /* Gray 400 */
+
+  --bg-body: #111827; /* Gray 900 */
+  --bg-card: #1f2937; /* Gray 800 */
+  --bg-sidebar: #1f2937;
+
+  --border-color: #374151; /* Gray 700 */
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
 /* 全局重置与基础样式 */
 body {
   background-color: var(--bg-body);
@@ -104,8 +124,9 @@ body {
   position: sticky;
   top: 80px; /* Header height (64px) + spacing */
   height: fit-content;
-  max-height: calc(100vh - 80px);
+  max-height: calc(100vh - 96px); /* Account for header and padding */
   overflow-y: auto;
+  align-self: flex-start; /* Ensure it starts at the top */
 }
 
 .menu-card {
@@ -190,6 +211,12 @@ body {
   padding: 12px 16px;
   font-size: 1rem;
   transition: all 0.2s;
+  caret-color: var(--primary-color);
+}
+
+.custom-input input {
+  caret-color: var(--primary-color) !important;
+  font-size: 1rem !important;
 }
 
 .custom-input:focus {
@@ -358,4 +385,211 @@ body {
 .task-description-editor .ql-editor.ql-blank::before {
   font-style: normal;
   color: var(--text-tertiary);
+}
+
+/* Ant Design Components Theme Overrides for Dark Mode */
+
+/* Input Components */
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-select-selector {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.ant-input::placeholder,
+.ant-input-affix-wrapper input::placeholder {
+  color: var(--text-tertiary) !important;
+}
+
+.ant-input:hover,
+.ant-input-affix-wrapper:hover,
+.ant-select:not(.ant-select-disabled):hover .ant-select-selector {
+  border-color: var(--primary-color) !important;
+}
+
+.ant-input:focus,
+.ant-input-focused,
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused,
+.ant-select-focused .ant-select-selector {
+  background-color: var(--bg-card) !important;
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 2px var(--primary-light) !important;
+}
+
+/* Input prefix/suffix icons */
+.ant-input-prefix,
+.ant-input-suffix {
+  color: var(--text-tertiary) !important;
+}
+
+/* Select Dropdown */
+.ant-select-dropdown {
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+.ant-select-item {
+  color: var(--text-primary) !important;
+}
+
+.ant-select-item-option:hover {
+  background-color: var(--bg-body) !important;
+}
+
+.ant-select-item-option-selected {
+  background-color: var(--primary-light) !important;
+  color: var(--primary-color) !important;
+  font-weight: 600;
+}
+
+/* Select clear icon */
+.ant-select-clear {
+  background-color: var(--bg-card) !important;
+  color: var(--text-tertiary) !important;
+}
+
+/* Select arrow */
+.ant-select-arrow {
+  color: var(--text-tertiary) !important;
+}
+
+/* Tags in Select */
+.ant-select-selection-item {
+  background-color: var(--bg-body) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Button Components */
+.ant-btn {
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+  background: transparent !important;
+}
+
+.ant-btn:not(.ant-btn-primary):not(.ant-btn-text):hover {
+  background: var(--bg-body) !important;
+  border-color: var(--primary-color) !important;
+  color: var(--primary-color) !important;
+}
+
+.ant-btn-primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.ant-btn-primary:hover {
+  background-color: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+}
+
+/* Checkbox */
+.ant-checkbox-inner {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+}
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+/* Popconfirm */
+.ant-popover-inner {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+.ant-popover-message-title {
+  color: var(--text-primary) !important;
+}
+
+.ant-popover-arrow-content {
+  background-color: var(--bg-card) !important;
+}
+
+/* Message / Notification */
+.ant-message-notice-content {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+/* Empty State */
+.ant-empty-description {
+  color: var(--text-secondary) !important;
+}
+
+/* List */
+.ant-list-empty-text {
+  color: var(--text-secondary) !important;
+}
+
+/* Fix custom-input specifically for dark mode */
+[data-theme='dark'] .custom-input:focus {
+  background: var(--bg-body) !important;
+}
+
+/* Fix task description editor for dark mode */
+[data-theme='dark'] .task-description-editor {
+  background: var(--bg-card);
+}
+
+[data-theme='dark'] .task-description-editor .ql-editor {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+[data-theme='dark'] .task-description-editor .ql-toolbar {
+  background: var(--bg-body);
+}
+
+/* Fix ReactQuill text color in dark mode */
+[data-theme='dark'] .ql-editor {
+  color: var(--text-primary) !important;
+}
+
+[data-theme='dark'] .ql-editor.ql-blank::before {
+  color: var(--text-tertiary) !important;
+}
+
+/* Fix tags in dark mode */
+[data-theme='dark'] .ant-tag {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Ensure tag text is always visible in dark mode */
+[data-theme='dark'] .ant-tag[class*="ant-tag-"] {
+  color: rgba(255, 255, 255, 0.95) !important;
+  font-weight: 500;
+}
+
+/* For colored tags, ensure text contrast */
+[data-theme='dark'] .ant-tag[color] {
+  background-color: rgba(var(--tag-bg-rgb, 255, 255, 255), 0.2) !important;
+  border-color: rgba(var(--tag-bg-rgb, 255, 255, 255), 0.3) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Fix Select tags in dark mode */
+[data-theme='dark'] .ant-select-selection-item {
+  color: var(--text-primary) !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  font-weight: 500;
+}
+
+/* Increase cursor size for all inputs */
+input, textarea, .ql-editor {
+  caret-color: var(--primary-color) !important;
+}
+
+/* Make cursor more visible */
+.ant-input {
+  caret-color: var(--primary-color) !important;
 }
