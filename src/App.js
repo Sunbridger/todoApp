@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
-import { Layout, Typography, Menu, Card, Avatar, Badge } from 'antd';
+import React, { useState, Suspense } from 'react';
+import { Layout, Typography, Menu, Spin, Skeleton } from 'antd';
 import {
   FileOutlined,
   CheckSquareOutlined,
   RocketOutlined,
-  BarChartOutlined
+  BarChartOutlined,
+  UserOutlined
 } from '@ant-design/icons';
 import TodoList from './components/TodoList';
-import Analytics from './components/Analytics';
 import './App.css';
 
-const { Header, Sider, Content } = Layout;
+// 懒加载 Analytics 组件
+const Analytics = React.lazy(() => import('./components/Analytics'));
+
 const { Title } = Typography;
 
 function App() {
@@ -40,8 +42,8 @@ function App() {
   ];
 
   return (
-    <Layout className="app-layout">
-      <div className="app-header">
+    <div className="app-layout">
+      <header className="app-header">
         <div className="header-content">
           <div className="app-logo">
             ✓
@@ -50,55 +52,48 @@ function App() {
             现代化待办清单
           </Title>
         </div>
-      </div>
-      <Layout hasSider className="main-layout">
-        <Sider width={260} className="app-sider">
-          <div className="menu-header">
-            <Badge count={1243} showZero className="visitor-badge">
-              <Avatar
-                shape="square"
-                size="large"
-                style={{ backgroundColor: '#4361ee' }}
-              >
-                <BarChartOutlined />
-              </Avatar>
-            </Badge>
-            <div className="menu-header-text">
-              <div>访客统计</div>
-              <div className="menu-subtitle">实时监控</div>
+      </header>
+
+      <main className="main-layout">
+        <aside className="app-sider">
+          <div className="visitor-card">
+            <UserOutlined style={{ fontSize: '24px' }} />
+            <div className="visitor-info">
+              <h4>今日访客</h4>
+              <p>1,243</p>
             </div>
           </div>
-          <Menu
-            mode="inline"
-            defaultSelectedKeys={['all']}
-            selectedKeys={[selectedKey]}
-            onSelect={({ key }) => setSelectedKey(key)}
-            style={{
-              height: 'calc(100% - 100px)',
-              borderRight: 0,
-              background: 'transparent',
-              marginTop: 20
-            }}
-            items={menuItems}
-          />
-        </Sider>
-        <Layout className="content-layout">
-          <Content className="app-content">
-            <div className="todo-container">
-              {selectedKey === 'analytics' ? (
-                <Card className="analytics-card slide-in">
+
+          <div className="menu-card">
+            <Menu
+              mode="inline"
+              defaultSelectedKeys={['all']}
+              selectedKeys={[selectedKey]}
+              onSelect={({ key }) => setSelectedKey(key)}
+              items={menuItems}
+            />
+          </div>
+        </aside>
+
+        <div className="content-layout">
+          <div className="todo-container">
+            {selectedKey === 'analytics' ? (
+              <div className="analytics-wrapper slide-in">
+                <Suspense fallback={
+                  <div style={{ padding: '24px', background: 'white', borderRadius: '16px' }}>
+                    <Skeleton active paragraph={{ rows: 6 }} />
+                  </div>
+                }>
                   <Analytics />
-                </Card>
-              ) : (
-                <Card className="todo-card slide-in">
-                  <TodoList filter={selectedKey} />
-                </Card>
-              )}
-            </div>
-          </Content>
-        </Layout>
-      </Layout>
-    </Layout>
+                </Suspense>
+              </div>
+            ) : (
+              <TodoList filter={selectedKey} />
+            )}
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }
 
