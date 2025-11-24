@@ -61,7 +61,7 @@ const App = () => {
         </Suspense>
       );
     }
-    return <TodoList filter={selectedKey} />;
+    return <TodoList filter={selectedKey} onFilterChange={setSelectedKey} />;
   };
 
   return (

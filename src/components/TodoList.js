@@ -1,30 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { List, Typography, Empty, Input, Skeleton, Select, Button, Space, Card, Statistic, Row, Col } from 'antd';
+import { List, Typography, Empty, Input, Skeleton, Select, Button, Tooltip } from 'antd';
 import { 
   SearchOutlined, 
-  SortAscendingOutlined, 
-  CheckSquareOutlined,
+  SortAscendingOutlined,
+  SortDescendingOutlined,
   DeleteOutlined,
   CheckOutlined,
   CloseOutlined,
-  QuestionCircleOutlined,
-  FireOutlined,
-  ClockCircleOutlined,
-  TrophyOutlined
+  QuestionCircleOutlined
 } from '@ant-design/icons';
 import TodoItem from './TodoItem';
 import TodoInput from './TodoInput';
-import ApiTest from './ApiTest';
 import { useTodos } from '../hooks/useTodos';
 
 const { Title } = Typography;
 const { Option } = Select;
 
-const TodoList = React.memo(({ filter }) => {
+const TodoList = React.memo(({ filter, onFilterChange }) => {
   const { todos, labels, loading, addTodo, updateTodo, deleteTodo } = useTodos();
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('createdAt');
+  const [sortOrder, setSortOrder] = useState('desc'); // 'asc' 或 'desc'
   const [selectedTodos, setSelectedTodos] = useState([]);
   const [showKeyboardHints, setShowKeyboardHints] = useState(false);
 
@@ -52,23 +49,33 @@ const TodoList = React.memo(({ filter }) => {
   });
 
   // 排序逻辑
-  const sortedTodos = [...filteredTodos].sort((a, b) => {
-    switch (sortBy) {
-      case 'priority':
-        const priorityOrder = { high: 0, medium: 1, low: 2 };
-        return (priorityOrder[a.priority] || 3) - (priorityOrder[b.priority] || 3);
-      case 'dueDate':
-        if (!a.dueDate && !b.dueDate) return 0;
-        if (!a.dueDate) return 1;
-        if (!b.dueDate) return -1;
-        return new Date(a.dueDate) - new Date(b.dueDate);
-      case 'title':
-        return (a.text || '').localeCompare(b.text || '');
-      case 'createdAt':
-      default:
-        return (b.id || 0) - (a.id || 0);
-    }
-  });
+  const sortedTodos = React.useMemo(() => {
+    let sorted = [...filteredTodos].sort((a, b) => {
+      let result = 0;
+      switch (sortBy) {
+        case 'priority':
+          const priorityOrder = { high: 0, medium: 1, low: 2 };
+          result = (priorityOrder[a.priority] || 3) - (priorityOrder[b.priority] || 3);
+          break;
+        case 'dueDate':
+          if (!a.dueDate && !b.dueDate) result = 0;
+          else if (!a.dueDate) result = 1;
+          else if (!b.dueDate) result = -1;
+          else result = new Date(a.dueDate) - new Date(b.dueDate);
+          break;
+        case 'title':
+          result = (a.text || '').localeCompare(b.text || '');
+          break;
+        case 'createdAt':
+        default:
+          result = (b.id || 0) - (a.id || 0);
+      }
+      
+      // 应用排序顺序
+      return sortOrder === 'asc' ? result : -result;
+    });
+    return sorted;
+  }, [filteredTodos, sortBy, sortOrder]);
 
   // 统计数据
   const stats = {
@@ -128,26 +135,27 @@ const TodoList = React.memo(({ filter }) => {
   };
 
   return (
-    <div>
-      {/* API 测试组件 - 临时调试用 */}
-      {filter === 'all' && <ApiTest />}
-      
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
       {/* 统计卡片 */}
       {filter === 'all' && (
         <div className="stats-card">
-          <div className="stat-item">
+          <div className="stat-item" onClick={() => onFilterChange?.('all')} style={{ cursor: 'pointer' }}>
             <p className="stat-value">{stats.total}</p>
             <p className="stat-label">总任务</p>
           </div>
-          <div className="stat-item">
+          <div className="stat-item" onClick={() => onFilterChange?.('active')} style={{ cursor: 'pointer' }}>
             <p className="stat-value" style={{ color: '#f59e0b' }}>{stats.active}</p>
             <p className="stat-label">进行中</p>
           </div>
-          <div className="stat-item">
+          <div className="stat-item" onClick={() => onFilterChange?.('completed')} style={{ cursor: 'pointer' }}>
             <p className="stat-value" style={{ color: '#10b981' }}>{stats.completed}</p>
             <p className="stat-label">已完成</p>
           </div>
-          <div className="stat-item">
+          <div className="stat-item" onClick={() => {
+            onFilterChange?.('all');
+            setSortBy('priority');
+            setSortOrder('desc');
+          }} style={{ cursor: 'pointer' }}>
             <p className="stat-value" style={{ color: '#ef4444' }}>{stats.highPriority}</p>
             <p className="stat-label">高优先级</p>
           </div>
@@ -155,13 +163,13 @@ const TodoList = React.memo(({ filter }) => {
       )}
 
       {/* 工具栏 */}
-      <div className="toolbar">
+      <div className="toolbar" style={{ position: 'relative' }}>
         <div className="toolbar-section">
           <Title level={3} style={{ margin: 0 }}>
             {getTitle()}
           </Title>
         </div>
-        <div className="toolbar-section" style={{ marginLeft: 'auto', gap: 12 }}>
+        <div className="toolbar-section" style={{ marginLeft: 'auto', gap: 12, position: 'relative' }}>
           <Input
             placeholder="搜索任务... (Ctrl+K)"
             value={searchTerm}
@@ -174,24 +182,34 @@ const TodoList = React.memo(({ filter }) => {
             value={sortBy}
             onChange={setSortBy}
             style={{ width: 140 }}
-            suffixIcon={<SortAscendingOutlined />}
           >
             <Option value="createdAt">创建时间</Option>
             <Option value="priority">优先级</Option>
             <Option value="dueDate">截止日期</Option>
             <Option value="title">标题</Option>
           </Select>
-          <Button
-            icon={<QuestionCircleOutlined />}
-            onClick={() => setShowKeyboardHints(!showKeyboardHints)}
-            type="text"
-          />
+          <Tooltip title="切换排序顺序">
+            <Button
+              icon={sortOrder === 'asc' ? <SortAscendingOutlined /> : <SortDescendingOutlined />}
+              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              type="text"
+            />
+          </Tooltip>
+          <Tooltip title="快捷键帮助">
+            <Button
+              icon={<QuestionCircleOutlined />}
+              onClick={() => setShowKeyboardHints(!showKeyboardHints)}
+              type="text"
+            />
+          </Tooltip>
         </div>
       </div>
 
       <TodoInput onAdd={handleAddTodo} availableLabels={labels} />
 
-      <List
+      {/* 可滚动的任务列表容器 */}
+      <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <List
         loading={false}
         dataSource={loading ? [...Array(5)].map((_, i) => ({ id: i, loading: true })) : sortedTodos}
         locale={{ 
@@ -227,68 +245,69 @@ const TodoList = React.memo(({ filter }) => {
           </List.Item>
         )}
         split={false}
-      />
+        />
 
-      {/* 批量操作栏 */}
-      {selectedTodos.length > 0 && (
-        <div className="bulk-actions-bar">
-          <span className="selected-count">
-            已选择 {selectedTodos.length} 项
-          </span>
-          <Button
-            icon={<CheckOutlined />}
-            onClick={handleBulkComplete}
-            size="small"
-          >
-            标记完成
-          </Button>
-          <Button
-            icon={<DeleteOutlined />}
-            onClick={handleBulkDelete}
-            danger
-            size="small"
-          >
-            批量删除
-          </Button>
-          <Button
-            icon={<CloseOutlined />}
-            onClick={() => setSelectedTodos([])}
-            size="small"
-            type="text"
-          />
-        </div>
-      )}
+        {/* 批量操作栏 */}
+        {selectedTodos.length > 0 && (
+          <div className="bulk-actions-bar">
+            <span className="selected-count">
+              已选择 {selectedTodos.length} 项
+            </span>
+            <Button
+              icon={<CheckOutlined />}
+              onClick={handleBulkComplete}
+              size="small"
+            >
+              标记完成
+            </Button>
+            <Button
+              icon={<DeleteOutlined />}
+              onClick={handleBulkDelete}
+              danger
+              size="small"
+            >
+              批量删除
+            </Button>
+            <Button
+              icon={<CloseOutlined />}
+              onClick={() => setSelectedTodos([])}
+              size="small"
+              type="text"
+            />
+          </div>
+        )}
 
-      {/* 快捷键提示 */}
-      {showKeyboardHints && (
-        <div className="keyboard-hint">
-          <h4>⌨️ 快捷键</h4>
-          <div className="keyboard-hint-item">
-            <span>快速添加</span>
-            <span className="keyboard-hint-key">Ctrl/Cmd + K</span>
+        {/* 快捷键提示 */}
+        {showKeyboardHints && (
+          <div className="keyboard-hint">
+            <h4>⌨️ 快捷键</h4>
+            <div className="keyboard-hint-item">
+              <span>快速添加</span>
+              <span className="keyboard-hint-key">Ctrl/Cmd + K</span>
+            </div>
+            <div className="keyboard-hint-item">
+              <span>全选</span>
+              <span className="keyboard-hint-key">Ctrl/Cmd + A</span>
+            </div>
+            <div className="keyboard-hint-item">
+              <span>取消选择</span>
+              <span className="keyboard-hint-key">Esc</span>
+            </div>
+            <div className="keyboard-hint-item">
+              <span>显示/隐藏提示</span>
+              <span className="keyboard-hint-key">?</span>
+            </div>
+            <Button
+              size="small"
+              type="text"
+              onClick={() => setShowKeyboardHints(false)}
+              style={{ marginTop: 8, width: '100%' }}
+            >
+              关闭
+            </Button>
           </div>
-          <div className="keyboard-hint-item">
-            <span>全选</span>
-            <span className="keyboard-hint-key">Ctrl/Cmd + A</span>
-          </div>
-          <div className="keyboard-hint-item">
-            <span>取消选择</span>
-            <span className="keyboard-hint-key">Esc</span>
-          </div>
-          <div className="keyboard-hint-item">
-            <span>显示/隐藏提示</span>
-            <span className="keyboard-hint-key">?</span>
-          </div>
-          <Button
-            size="small"
-            type="text"
-            onClick={() => setShowKeyboardHints(false)}
-            style={{ marginTop: 8, width: '100%' }}
-          >
-            关闭
-          </Button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 });

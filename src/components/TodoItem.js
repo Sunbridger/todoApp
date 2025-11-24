@@ -200,7 +200,7 @@ const TodoItem = ({ todo, onUpdate, onDelete, isSelected, onSelect, isDragging }
                   onClick={() => setIsExpanded(!isExpanded)}
                   className="expand-btn"
                   icon={isExpanded ? <UpOutlined /> : <DownOutlined />}
-                  style={{ padding: '4px 0', height: 'auto' }}
+                  style={{ padding: '4px 12px', height: 'auto', marginTop: '8px' }}
                 >
                   {isExpanded ? '收起' : '展开'}
                 </Button>

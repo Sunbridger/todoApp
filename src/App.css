@@ -49,6 +49,25 @@
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
 }
 
+/* 暗黑模式下的 Layout 背景色 */
+[data-theme='dark'] .ant-layout {
+  background-color: #0f172a !important;
+}
+
+/* 暗黑模式下的 Title 文字颜色 */
+[data-theme='dark'] .ant-typography {
+  color: var(--text-primary) !important;
+}
+
+[data-theme='dark'] h1,
+[data-theme='dark'] h2,
+[data-theme='dark'] h3,
+[data-theme='dark'] h4,
+[data-theme='dark'] h5,
+[data-theme='dark'] h6 {
+  color: var(--text-primary) !important;
+}
+
 /* 全局重置与基础样式 */
 body {
   background-color: var(--bg-body);
@@ -58,9 +77,10 @@ body {
 
 /* 布局容器 */
 .app-layout {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .app-header {
@@ -70,8 +90,7 @@ body {
   height: 64px;
   display: flex;
   align-items: center;
-  position: sticky;
-  top: 0;
+  flex-shrink: 0;
   z-index: 50;
   box-shadow: var(--shadow-sm);
 }
@@ -80,6 +99,8 @@ body {
 .ant-layout-header.app-header {
   background: var(--bg-card) !important;
   line-height: 64px;
+  height: 64px;
+  padding: 0 var(--spacing-xl);
 }
 
 .header-content {
@@ -125,6 +146,7 @@ body {
   width: 100%;
   padding: var(--spacing-lg);
   gap: var(--spacing-lg);
+  overflow: hidden;
 }
 
 /* 侧边栏 */
@@ -132,12 +154,9 @@ body {
   width: 260px;
   flex-shrink: 0;
   background: transparent !important;
-  position: sticky;
-  top: 80px; /* Header height (64px) + spacing */
-  height: fit-content;
-  max-height: calc(100vh - 96px); /* Account for header and padding */
+  height: 100%;
   overflow-y: auto;
-  align-self: flex-start; /* Ensure it starts at the top */
+  overflow-x: hidden;
 }
 
 .menu-card {
@@ -198,10 +217,17 @@ body {
 /* 内容区域 */
 .content-layout {
   flex: 1;
-  min-width: 0; /* 防止 flex 子项溢出 */
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .todo-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   animation: fadeIn 0.5s ease-out;
 }
 
@@ -213,6 +239,7 @@ body {
   box-shadow: var(--shadow-md);
   border: 1px solid var(--border-color);
   margin-bottom: var(--spacing-lg);
+  flex-shrink: 0;
 }
 
 .custom-input {
@@ -242,6 +269,13 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-lg);
+  flex-shrink: 0;
+}
+
+.ant-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .search-input {
@@ -325,9 +359,17 @@ body {
 }
 
 .expand-btn {
-  margin-top: 4px;
-  font-size: 12px;
+  margin-top: 8px;
+  font-size: 13px;
   color: var(--primary-color);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.expand-btn:hover {
+  color: var(--primary-hover);
 }
 
 .todo-actions {
@@ -406,6 +448,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: var(--spacing-lg);
+  flex-shrink: 0;
 }
 
 .stat-item {
@@ -414,11 +457,14 @@ body {
   border-radius: var(--radius-md);
   background: var(--bg-body);
   transition: all 0.3s;
+  cursor: pointer;
+  user-select: none;
 }
 
 .stat-item:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
+  background: var(--primary-light);
 }
 
 .stat-value {
@@ -442,6 +488,7 @@ body {
   align-items: center;
   margin-bottom: var(--spacing-lg);
   flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
 .toolbar-section {
@@ -554,7 +601,7 @@ body {
 /* 快捷键提示 */
 .keyboard-hint {
   position: fixed;
-  bottom: 24px;
+  top: 80px;
   right: 24px;
   background: var(--bg-card);
   border-radius: var(--radius-lg);
@@ -562,7 +609,7 @@ body {
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-color);
   max-width: 300px;
-  z-index: 100;
+  z-index: 1000;
   animation: slideIn 0.3s ease;
 }
 
@@ -692,7 +739,8 @@ body {
 /* Input Components */
 .ant-input,
 .ant-input-affix-wrapper,
-.ant-select-selector {
+.ant-select-selector,
+.ant-select {
   background-color: var(--bg-card) !important;
   border-color: var(--border-color) !important;
   color: var(--text-primary) !important;
@@ -760,7 +808,7 @@ body {
 
 /* Tags in Select */
 .ant-select-selection-item {
-  background-color: var(--bg-body) !important;
+  background-color: var(--bg-card) !important;
   border-color: var(--border-color) !important;
 }
 
@@ -896,9 +944,15 @@ body {
 /* Fix Select tags in dark mode */
 [data-theme='dark'] .ant-select-selection-item {
   color: var(--text-primary) !important;
-  background: rgba(255, 255, 255, 0.15) !important;
+  background: #1f2937 !important;
   border-color: rgba(255, 255, 255, 0.25) !important;
   font-weight: 500;
+}
+
+/* Fix Select selector in dark mode */
+[data-theme='dark'] .ant-select-selector {
+  background-color: #1f2937 !important;
+  border-color: var(--border-color) !important;
 }
 
 /* Increase cursor size for all inputs */
