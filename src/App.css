@@ -348,6 +348,295 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* 优先级标签样式 */
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.priority-high {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.priority-medium {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.priority-low {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* 统计卡片 */
+.stats-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.stat-item {
+  text-align: center;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  background: var(--bg-body);
+  transition: all 0.3s;
+}
+
+.stat-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin: 0;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 4px 0 0 0;
+  font-weight: 500;
+}
+
+/* 排序和过滤工具栏 */
+.toolbar {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.toolbar-section {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+/* 拖拽样式 */
+.todo-item-card.dragging {
+  opacity: 0.5;
+  transform: rotate(2deg);
+}
+
+.todo-item-card.drag-over {
+  border-color: var(--primary-color);
+  background: var(--primary-light);
+}
+
+/* 批量操作栏 */
+.bulk-actions-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-md) var(--spacing-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  z-index: 100;
+  animation: slideIn 0.3s ease;
+}
+
+.bulk-actions-bar .selected-count {
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-right: var(--spacing-sm);
+}
+
+/* 空状态优化 */
+.empty-state {
+  text-align: center;
+  padding: var(--spacing-xl) 0;
+}
+
+.empty-state-icon {
+  font-size: 64px;
+  color: var(--text-tertiary);
+  margin-bottom: var(--spacing-md);
+}
+
+/* 截止日期显示 */
+.due-date-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--bg-body);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.due-date-badge.overdue {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+[data-theme='dark'] .due-date-badge.overdue {
+  background: rgba(220, 38, 38, 0.2);
+  color: #fca5a5;
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+.due-date-badge.today {
+  background: #fef3c7;
+  color: #d97706;
+  border-color: #fde68a;
+}
+
+[data-theme='dark'] .due-date-badge.today {
+  background: rgba(217, 119, 6, 0.2);
+  color: #fcd34d;
+  border-color: rgba(217, 119, 6, 0.3);
+}
+
+/* 进度条 */
+.progress-bar {
+  height: 4px;
+  background: var(--bg-body);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: var(--spacing-md);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+/* 快捷键提示 */
+.keyboard-hint {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  max-width: 300px;
+  z-index: 100;
+  animation: slideIn 0.3s ease;
+}
+
+.keyboard-hint h4 {
+  margin: 0 0 var(--spacing-sm) 0;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.keyboard-hint-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.keyboard-hint-key {
+  background: var(--bg-body);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-weight: 600;
+  border: 1px solid var(--border-color);
+}
+
+/* 改进的卡片悬停效果 */
+.todo-item-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.todo-item-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.todo-item-card:hover::before {
+  left: 100%;
+}
+
+/* 选择模式样式 */
+.todo-item-card.selected {
+  border-color: var(--primary-color);
+  background: var(--primary-light);
+  box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+/* 加载骨架屏优化 */
+.skeleton-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  border: 1px solid var(--border-color);
+}
+
+/* 标签元数据 */
+.todo-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: center;
+}
+
 /* 响应式 */
 @media (max-width: 768px) {
   .main-layout {

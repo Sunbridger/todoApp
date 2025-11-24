@@ -33,8 +33,8 @@ export const useTodos = () => {
     fetchLabels();
   }, [fetchTodos, fetchLabels]);
 
-  const addTodo = useCallback(async ({ text, body, labels: todoLabels }) => {
-    console.log('[addTodo] Starting with:', { text, body, labels: todoLabels });
+  const addTodo = useCallback(async ({ text, body, labels: todoLabels, dueDate, priority }) => {
+    console.log('[addTodo] Starting with:', { text, body, labels: todoLabels, dueDate, priority });
     // Optimistic update
     const tempId = Date.now();
     const newTodo = {
@@ -43,14 +43,16 @@ export const useTodos = () => {
       body,
       completed: false,
       labels: todoLabels || [],
+      dueDate,
+      priority: priority || 'medium',
       loading: true
     };
 
     setTodos(prev => [newTodo, ...prev]);
 
     try {
-      console.log('[addTodo] Calling createTodo with:', { title: text, body, labels: todoLabels });
-      const createdTodo = await todoService.createTodo({ title: text, body, labels: todoLabels });
+      console.log('[addTodo] Calling createTodo with:', { title: text, body, labels: todoLabels, dueDate, priority });
+      const createdTodo = await todoService.createTodo({ title: text, body, labels: todoLabels, dueDate, priority });
       console.log('[addTodo] createTodo returned:', createdTodo);
       setTodos(prev => prev.map(todo =>
         todo.id === tempId ? createdTodo : todo

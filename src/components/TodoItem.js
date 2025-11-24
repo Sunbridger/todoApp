@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Checkbox, Button, Input, message, Popconfirm, Tag } from 'antd';
-  // ... existing imports
 import {
   DeleteOutlined,
   EditOutlined,
@@ -8,12 +7,14 @@ import {
   CloseOutlined,
   DownOutlined,
   UpOutlined,
+  CalendarOutlined,
+  FlagOutlined,
 } from '@ant-design/icons';
 import ReactQuill from 'react-quill';
+import dayjs from 'dayjs';
 import 'react-quill/dist/quill.snow.css';
-// ...
 
-const TodoItem = ({ todo, onUpdate, onDelete }) => {
+const TodoItem = ({ todo, onUpdate, onDelete, isSelected, onSelect, isDragging }) => {
   const [editing, setEditing] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
@@ -25,6 +26,20 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
 
   const title = todo?.text || '';
   const content = todo?.body || '';
+  
+  // 计算截止日期状态
+  const getDueDateStatus = () => {
+    if (!todo.dueDate) return null;
+    const today = dayjs().startOf('day');
+    const dueDate = dayjs(todo.dueDate).startOf('day');
+    const diff = dueDate.diff(today, 'day');
+    
+    if (diff < 0) return 'overdue';
+    if (diff === 0) return 'today';
+    return 'upcoming';
+  };
+  
+  const dueDateStatus = getDueDateStatus();
 
   useEffect(() => {
     if (contentRef.current) {
@@ -99,8 +114,33 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
     );
   }
 
+  const getPriorityBadge = () => {
+    if (!todo.priority) return null;
+    const priorityMap = {
+      high: { label: '高', className: 'priority-high', icon: '🔴' },
+      medium: { label: '中', className: 'priority-medium', icon: '🟡' },
+      low: { label: '低', className: 'priority-low', icon: '🟢' }
+    };
+    const p = priorityMap[todo.priority];
+    if (!p) return null;
+    return (
+      <span className={`priority-badge ${p.className}`}>
+        {p.icon} {p.label}
+      </span>
+    );
+  };
+
   return (
-    <div className={`todo-item-card ${todo.completed ? 'completed' : ''}`}>
+    <div 
+      className={`todo-item-card ${todo.completed ? 'completed' : ''} ${isSelected ? 'selected' : ''} ${isDragging ? 'dragging' : ''}`}
+      onClick={(e) => {
+        // 如果按住 Shift 或 Ctrl/Cmd，触发选择
+        if (e.shiftKey || e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          onSelect?.(todo.id);
+        }
+      }}
+    >
       <div className="todo-header">
         <Checkbox
           checked={todo.completed}
@@ -108,29 +148,42 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
           className="todo-checkbox"
         />
         <div className="todo-content">
-          <div className={`todo-title ${todo.completed ? 'completed' : ''}`}>
-            {title}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+            <div className={`todo-title ${todo.completed ? 'completed' : ''}`}>
+              {title}
+            </div>
+            {getPriorityBadge()}
           </div>
 
-          {/* Tags Display */}
-          {todo.labels && todo.labels.length > 0 && (
-            <div style={{ marginBottom: 8, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-              {todo.labels.map((label, index) => {
-                // If label is a string, use default color; if object, use label.color
-                const labelName = typeof label === 'string' ? label : label.name;
-                const labelColor = typeof label === 'object' && label.color ? `#${label.color}` : undefined;
-                return (
-                  <Tag
-                    key={label.id || labelName || index}
-                    color={labelColor}
-                    style={{ marginRight: 0 }}
-                  >
-                    {labelName}
-                  </Tag>
-                );
-              })}
-            </div>
-          )}
+          {/* 元数据：标签和截止日期 */}
+          <div className="todo-metadata">
+            {todo.labels && todo.labels.length > 0 && (
+              <>
+                {todo.labels.map((label, index) => {
+                  const labelName = typeof label === 'string' ? label : label.name;
+                  const labelColor = typeof label === 'object' && label.color ? `#${label.color}` : undefined;
+                  return (
+                    <Tag
+                      key={label.id || labelName || index}
+                      color={labelColor}
+                      style={{ marginRight: 0 }}
+                    >
+                      {labelName}
+                    </Tag>
+                  );
+                })}
+              </>
+            )}
+            
+            {todo.dueDate && (
+              <span className={`due-date-badge ${dueDateStatus}`}>
+                <CalendarOutlined />
+                {dayjs(todo.dueDate).format('MM-DD')}
+                {dueDateStatus === 'overdue' && ' (逾期)'}
+                {dueDateStatus === 'today' && ' (今天)'}
+              </span>
+            )}
+          </div>
 
 
           {content && (
