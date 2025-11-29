@@ -21,7 +21,7 @@ const TodoList = React.memo(({ filter, onFilterChange }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('createdAt');
-  const [sortOrder, setSortOrder] = useState('desc'); // 'asc' 或 'desc'
+  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' 或 'desc'
   const [selectedTodos, setSelectedTodos] = useState([]);
   const [showKeyboardHints, setShowKeyboardHints] = useState(false);
 

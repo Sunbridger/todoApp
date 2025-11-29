@@ -104,8 +104,7 @@ export const getTodos = async () => {
   try {
     const response = await axiosInstance.get(`/repos/${REPO_OWNER}/${REPO_NAME}/issues`, {
       params: {
-        state: 'all',
-        labels: 'todo'
+        state: 'all'
       }
     });
 
