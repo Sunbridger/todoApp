@@ -3,50 +3,65 @@
   --primary-color: #6366f1; /* Indigo 500 - 更现代的蓝紫色 */
   --primary-hover: #4f46e5;
   --primary-light: #e0e7ff;
+  --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
 
   --text-primary: #111827; /* Gray 900 - Darker for better visibility */
   --text-secondary: #374151; /* Gray 700 - Darker */
   --text-tertiary: #6b7280; /* Gray 500 - Darker */
 
-  --bg-body: #f3f4f6; /* Gray 100 */
+  --bg-body: #fafbfc; /* 更浅的背景色 */
   --bg-card: #ffffff;
   --bg-sidebar: #ffffff;
+  --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
 
-  --border-color: #e5e7eb; /* Gray 200 */
+  --border-color: #e2e8f0; /* 更柔和的边框色 */
+  --border-hover: #cbd5e1;
 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
+  --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
 
   --spacing-xs: 0.5rem;
   --spacing-sm: 0.75rem;
   --spacing-md: 1rem;
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
+
+  /* 动画变量 */
+  --transition-fast: 0.15s ease-out;
+  --transition-normal: 0.3s ease-out;
+  --transition-slow: 0.5s ease-out;
 }
 
 [data-theme='dark'] {
   --primary-color: #818cf8; /* Indigo 400 - Dark mode primary */
   --primary-hover: #6366f1;
   --primary-light: rgba(99, 102, 241, 0.15);
+  --primary-gradient: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
 
-  --text-primary: #f3f4f6; /* Gray 100 */
-  --text-secondary: #d1d5db; /* Gray 300 */
-  --text-tertiary: #9ca3af; /* Gray 400 */
+  --text-primary: #f8fafc; /* 更亮的主文本 */
+  --text-secondary: #e2e8f0; /* 更亮的次要文本 */
+  --text-tertiary: #94a3b8; /* 更亮的三级文本 */
 
-  --bg-body: #111827; /* Gray 900 */
-  --bg-card: #1f2937; /* Gray 800 */
-  --bg-sidebar: #1f2937;
+  --bg-body: #0f172a; /* Slate 950 */
+  --bg-card: #1e293b; /* Slate 800 */
+  --bg-sidebar: #1e293b;
+  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
 
-  --border-color: #374151; /* Gray 700 */
+  --border-color: #334155; /* Slate 700 */
+  --border-hover: #475569; /* Slate 600 */
 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
 }
 
 /* 暗黑模式下的 Layout 背景色 */
@@ -92,7 +107,13 @@ body {
   align-items: center;
   flex-shrink: 0;
   z-index: 50;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+[data-theme='dark'] .app-header {
+  background: rgba(30, 41, 59, 0.9) !important;
 }
 
 /* Ensure Ant Design Header respects theme */
@@ -113,16 +134,23 @@ body {
 }
 
 .app-logo {
-  width: 36px;
-  height: 36px;
-  background: var(--primary-color);
+  width: 40px;
+  height: 40px;
+  background: var(--primary-gradient);
   color: white;
-  border-radius: 8px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  font-size: 20px;
+  font-weight: 800;
+  font-size: 22px;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+}
+
+.app-logo:hover {
+  transform: rotate(5deg) scale(1.05);
+  box-shadow: var(--shadow-lg);
 }
 
 .app-title {
@@ -234,33 +262,57 @@ body {
 /* Todo Input 组件 */
 .todo-input-card {
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-2xl);
   padding: var(--spacing-lg);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-color);
   margin-bottom: var(--spacing-sm);
   flex-shrink: 0;
+  position: relative;
+  background: var(--bg-gradient);
+}
+
+.todo-input-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: var(--primary-gradient);
+  border-radius: inherit;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: xor;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.todo-input-card:focus-within::before {
+  opacity: 1;
 }
 
 .custom-input {
   border: 2px solid transparent;
-  background: var(--bg-body);
-  border-radius: var(--radius-md);
-  padding: 12px 16px;
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: 14px 20px;
   font-size: 1rem;
-  transition: all 0.2s;
+  transition: all var(--transition-normal);
   caret-color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
 }
 
 .custom-input input {
   caret-color: var(--primary-color) !important;
   font-size: 1rem !important;
+  font-weight: 500;
 }
 
 .custom-input:focus {
-  background: white;
+  background: var(--bg-card);
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 4px var(--primary-light);
+  box-shadow: 0 0 0 4px var(--primary-light), var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 /* Todo List & Items */
@@ -276,6 +328,27 @@ body {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
+  /* 自定义滚动条 */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+.ant-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ant-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ant-list::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+  transition: background var(--transition-fast);
+}
+
+.ant-list::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
 }
 
 .search-input {
@@ -291,21 +364,48 @@ body {
 
 .todo-item-card {
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-color);
-  transition: all 0.2s;
+  transition: all var(--transition-normal);
   display: flex;
   flex-direction: column;
-  width: 100%; /* Ensure full width */
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.todo-item-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--primary-gradient);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
 }
 
 .todo-item-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--primary-light);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary-color);
+}
+
+.todo-item-card:hover::before {
+  opacity: 1;
+}
+
+.todo-item-card.completed {
+  opacity: 0.7;
+  background: var(--bg-body);
+}
+
+.todo-item-card.completed:hover {
+  opacity: 0.9;
 }
 
 .todo-header {
@@ -411,74 +511,132 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.priority-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left var(--transition-slow);
+}
+
+.priority-badge:hover::before {
+  left: 100%;
 }
 
 .priority-high {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
   color: white;
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.priority-high:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.5);
 }
 
 .priority-medium {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
   color: white;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+}
+
+.priority-medium:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.5);
 }
 
 .priority-low {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
   color: white;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.priority-low:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5);
 }
 
 /* 统计卡片 */
 .stats-card {
   background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-2xl);
+  padding: var(--spacing-md) var(--spacing-lg);
   margin-bottom: var(--spacing-sm);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
   border: 1px solid var(--border-color);
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: var(--spacing-sm);
   flex-shrink: 0;
+  background: var(--bg-gradient);
 }
 
 .stat-item {
   text-align: center;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--radius-md);
-  background: var(--bg-body);
-  transition: all 0.3s;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  transition: all var(--transition-normal);
   cursor: pointer;
   user-select: none;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.stat-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left var(--transition-slow);
 }
 
 .stat-item:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  background: var(--primary-light);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-color);
+}
+
+.stat-item:hover::before {
+  left: 100%;
 }
 
 .stat-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary-color);
+  font-size: 1.75rem;
+  font-weight: 800;
+  background: var(--primary-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   margin: 0;
+  line-height: 1.2;
 }
 
 .stat-label {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--text-secondary);
-  margin: 2px 0 0 0;
-  font-weight: 500;
+  margin: 4px 0 0 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* 排序和过滤工具栏 */
