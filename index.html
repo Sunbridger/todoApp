@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Todo App - Simple task management"
+    />
+    <title>Todo App</title>
+    <script>
+      window.onerror = function(msg, url, line, col, error) {
+        document.body.innerHTML += '<div style="color:red;padding:20px;font-size:16px;background:white;position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;overflow:auto;border:5px solid red">' +
+          '<h3>Error: ' + msg + '</h3>' +
+          '<p>URL: ' + url + '</p>' +
+          '<p>Line: ' + line + '</p>' +
+          '<pre>' + (error ? error.stack : '') + '</pre>' +
+          '</div>';
+      };
+      window.addEventListener('unhandledrejection', function(event) {
+         document.body.innerHTML += '<div style="color:red;padding:20px;font-size:16px;background:white;position:fixed;top:50%;left:0;width:100%;height:50%;z-index:9999;overflow:auto;border-top:5px solid red">' +
+          '<h3>Unhandled Rejection: ' + event.reason + '</h3>' +
+          '</div>';
+      });
+    </script>
+    <script type="module" crossorigin src="/todoApp/assets/index-1a7c2df9.js"></script>
+    <link rel="stylesheet" href="/todoApp/assets/index-0d21b50a.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    
+  </body>
+</html>
